@@ -1,5 +1,22 @@
 <%- include('../_partial/_header'); -%>
 
-<h1>Welcome to Page Accueil</h1>
+    <h1>Welcome to Page Accueil</h1>
+    <% for(var i = 0;i < ID_MODULES.length; i++){ %>
+        <h1>
+            <div class="card-deck">
+                <div class="card">
 
-<%- include('../_partial/_footer'); -%>
+                    <div class="card-body">
+                        <p class="card-title">Name:
+                            <%= NAME_MODULE[i].NAME_MODULE %> title</p>
+                        <h5 class="card-text">Description:
+                            <%= DESCRIPTION[i].DESCRIPTION %>
+                        </h5>
+                        <h5 class="card-text"><small class="text-muted"><%= MOYEN_NOTE[i].MOYEN_NOTE %> points</small></h5>
+                        <a href="#" class="btn btn-primary">access</a>
+                    </div>
+                </div>
+
+        </h1>
+        <% } %>
+            <%- include('../_partial/_footer'); -%>
