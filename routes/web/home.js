@@ -27,10 +27,6 @@ router.get("/login", function(req, res) {
     res.render("home/login");
 });
 
-router.get("/admin", function(req, res) {
-    res.render("home/admin");
-});
-
 router.post("/login", urlencodedParser, async function(req, res) {
     var data = req.body
 
@@ -86,6 +82,10 @@ router.get("/delegue", async function(req, res) {
     // var data_sql = await pool.query("SELECT * FROM COMMENTAIRE JOIN MODULE AS (ID_MODULES) WHERE VALID IS NULL")
 
     res.render("home/delegue")
+})
+
+router.get("/logout", async function(req, res) {
+    res.redirect("home")
 })
 
 module.exports = router;

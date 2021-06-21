@@ -22,9 +22,7 @@
             
             <ul class="nav navbar-nav navbar-right">
             <% if(currentUser != null) { %>
-                <li>
-                    <div class="usermenu"><span class="login">You are currently using guest access (<a href="/login">Log in</a>)</span></div>
-                </li>
+                <li><a href="#">Welcome <%= currentUser.username %> !</a></li>
                 <li><a href="/logout">Logout</a></li>
             <%}%>
             <% if(currentUser == null) { %> 
