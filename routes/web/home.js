@@ -37,6 +37,10 @@ router.get("/login", function(req, res) {
     res.render("home/login");
 });
 
+router.get("/admin", function(req, res) {
+    res.render("home/admin");
+});
+
 router.post("/login", urlencodedParser, async function(req, res) {
     var data = req.body
 

@@ -1,7 +1,7 @@
 install nodejs  
 'npm init' -> fill out the informations
 install express   'npm install express --save'
-install path, ejs, mariadb : 'sudo npm install path ejs mariadb --save'
+install path, ejs, mariadb, boy-parser : 'sudo npm install path ejs mariadb body-parser --save'
 
 install mariadb in your computer;
 
