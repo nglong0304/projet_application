@@ -1,4 +1,4 @@
-install nodejs  
-'npm init' -> fill out the informations
-install express   'npm install express --save'
-install body-parser
+npm init
+npm install express --save
+npm install mariadb
+npm install body-parser
