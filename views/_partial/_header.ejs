@@ -22,7 +22,7 @@
             
             <ul class="nav navbar-nav navbar-right">
             <% if(currentUser != null) { %>
-                <li><a href="#">Welcome <%= currentUser.username %> !</a></li>
+                <li><a href="#">Welcome <%= currentUser%> !</a></li>
                 <li><a href="/logout">Logout</a></li>
             <%}%>
             <% if(currentUser == null) { %> 
