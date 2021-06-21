@@ -8,20 +8,10 @@ const pool = require('../database/database.js');
 
 
 router.get("/", async function(req, res) {
-    var ID_MODULES = await pool.query('SELECT ID_MODULES FROM MODULE')
-    var ID_USER = await pool.query('SELECT ID_USER FROM MODULE')
-    var NAME_MODULE = await pool.query('SELECT NAME_MODULE FROM MODULE')
-    var DESCRIPTION = await pool.query('SELECT DESCRIPTION FROM MODULE')
-    var CLE = await pool.query('SELECT CLE FROM MODULE')
-    var MOYEN_NOTE = await pool.query('SELECT MOYEN_NOTE FROM MODULE')
+    var data = await pool.query('SELECT * FROM MODULE')
 
     res.render("home/index", {
-        ID_MODULES: ID_MODULES,
-        ID_USER: ID_USER,
-        NAME_MODULE: NAME_MODULE,
-        DESCRIPTION: DESCRIPTION,
-        CLE: CLE,
-        MOYEN_NOTE: MOYEN_NOTE
+        data: data
     });
 });
 
@@ -44,29 +34,31 @@ router.get("/admin", function(req, res) {
 router.post("/login", urlencodedParser, async function(req, res) {
     var data = req.body
 
-    var username = await pool.query('SELECT USER_NAME FROM USERS')
-    var password = await pool.query('SELECT USER_PASSWORD FROM USERS')
-    var user_type = await pool.query('SELECT TYPE FROM USERS')
+    var data_sql = await pool.query("SELECT * FROM USERS")
+
 
     var flag = false
 
-    for (var i = 0; i < username.length; i++) {
-        if (data.username == username[i].USER_NAME && data.password == password[i].USER_PASSWORD) {
+    for (var i = 0; i < data_sql.length; i++) {
+        if (data.username == data_sql[i].USER_NAME && data.password == data_sql[i].USER_PASSWORD) {
 
-            if (user_type[i].TYPE == 0) {
-                res.redirect("/admin")
+            if (data_sql[i].TYPE == 0) {
+                var string = encodeURIComponent(data_sql[i].ID_USER);
+                res.redirect("/admin/?id=" + string)
                 flag = true
                 break
             }
 
-            if (user_type[i].TYPE == 1) {
-                res.redirect("/delegue")
+            if (data_sql[i].TYPE == 1) {
+                var string = encodeURIComponent(data_sql[i].ID_USER);
+                res.redirect("/delegue/?id=" + string)
                 flag = true
                 break
             }
 
-            if (user_type[i].TYPE == 2) {
-                res.redirect("/prof")
+            if (data_sql[i].TYPE == 2) {
+                var string = encodeURIComponent(data_sql[i].ID_USER);
+                res.redirect("/prof/?id=" + string)
                 flag = true
                 break
             }
@@ -79,5 +71,21 @@ router.post("/login", urlencodedParser, async function(req, res) {
 
 })
 
+router.get("/prof", async function(req, res) {
+    var id = req.query.id;
+    res.render("home/prof")
+})
+
+router.get("/admin", async function(req, res) {
+    var id = req.query.id;
+    res.render("home/admin")
+})
+
+router.get("/delegue", async function(req, res) {
+    var id = req.query.id;
+    // var data_sql = await pool.query("SELECT * FROM COMMENTAIRE JOIN MODULE AS (ID_MODULES) WHERE VALID IS NULL")
+
+    res.render("home/delegue")
+})
 
 module.exports = router;

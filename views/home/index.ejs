@@ -1,19 +1,19 @@
-<%- include('../_partial/_header'); -%>
+<%- include('../_partial/_header_with_login'); -%>
 
     <h1>Welcome to Page Accueil</h1>
-    <% for(var i = 0;i < ID_MODULES.length; i++){ %>
+    <% for(var i = 0;i < data.length; i++){ %>
         <h1>
             <div class="card-deck">
                 <div class="card">
 
                     <div class="card-body">
                         <p class="card-title">Name:
-                            <%= NAME_MODULE[i].NAME_MODULE %>
+                            <%= data[i].NAME_MODULE %>
                         </p>
                         <h5 class="card-text">Description:
-                            <%= DESCRIPTION[i].DESCRIPTION %>
+                            <%= data[i].DESCRIPTION %>
                         </h5>
-                        <h5 class="card-text"><small class="text-muted"><%= MOYEN_NOTE[i].MOYEN_NOTE %> points</small></h5>
+                        <h5 class="card-text"><small class="text-muted"><%= data[i].MOYEN_NOTE %> points</small></h5>
                         <a href="#" class="btn btn-primary">access</a>
                     </div>
                 </div>
