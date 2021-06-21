@@ -39,8 +39,9 @@ router.post("/login", urlencodedParser, async function(req, res) {
         if (data.username == data_sql[i].USER_NAME && data.password == data_sql[i].USER_PASSWORD) {
 
             if (data_sql[i].TYPE == 0) {
-                var string = encodeURIComponent(data_sql[i].ID_USER);
-                res.redirect("/admin/?id=" + string)
+                var id = encodeURIComponent(data_sql[i].ID_USER);
+                var username = encodeURIComponent(data_sql[i].USER_NAME);
+                res.redirect("/admin/?user=" + username +"&id=" +id)
                 flag = true
                 break
             }
