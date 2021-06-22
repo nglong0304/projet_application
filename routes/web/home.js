@@ -91,12 +91,14 @@ router.get("/logout", async function(req, res) {
 router.get("/section/:p1", async function(req, res) {
     var data_section = await pool.query('SELECT * FROM SECTION')
     var data_module = await pool.query('SELECT * FROM MODULE')
+    var data_users = await pool.query('SELECT * FROM USERS')
     var param = req.params.p1
 
     res.render("home/section", {
         data_section: data_section,
         param: param,
-        data_module, data_module
+        data_module: data_module,
+        data_users: data_users
     });
 });
 
