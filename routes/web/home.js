@@ -6,9 +6,8 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 const pool = require('../database/database.js');
 
-
 router.get("/", async function(req, res) {
-    var data = await pool.query('SELECT * FROM MODULE')
+    var data = await pool.query('SELECT * FROM SECTION')
 
     res.render("home/index", {
         data: data
