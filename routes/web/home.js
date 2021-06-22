@@ -79,9 +79,31 @@ router.get("/admin", async function(req, res) {
 
 router.get("/delegue", async function(req, res) {
     var id = req.query.id;
-    // var data_sql = await pool.query("SELECT * FROM COMMENTAIRE JOIN MODULE AS (ID_MODULES) WHERE VALID IS NULL")
+    var data = await pool.query("SELECT * FROM COMMENTAIRE JOIN MODULE USING(ID_MODULES) WHERE VALID=0")
 
-    res.render("home/delegue")
+    res.render("home/delegue", {
+        data: data
+    })
 })
+
+router.post("/delegue", urlencodedParser, async function(req, res) {
+    var data = req.body
+
+    var sql_query_update = "UPDATE COMMENTAIRE SET VALID=1 WHERE ID_CMT=?"
+    var sql_query_del = "DELETE FROM COMMENTAIRE WHERE ID_CMT=?"
+    if (data.Accept == "Accept") {
+        var ret = await pool.query(sql_query_update, data.id_cmt)
+    } else if (data.Refuse == "Refuse") {
+        var ret = await pool.query(sql_query_del, data.id_cmt)
+    }
+
+    var data_ret = await pool.query("SELECT * FROM COMMENTAIRE JOIN MODULE USING(ID_MODULES) WHERE VALID=0")
+
+    res.render("home/delegue", {
+        data: data_ret
+    })
+})
+
+
 
 module.exports = router;
