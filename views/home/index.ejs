@@ -1,23 +1,32 @@
 <%- include('../_partial/_header'); -%>
 
-    <h1>Welcome to Page Accueil</h1>
-    <% for(var i = 0;i < data.length; i++){ %>
-        <h1>
-            <div class="card-deck">
-                <div class="card">
+    <h1>Welcome to Home page.</h1><br />
 
-                    <div class="card-body">
-                        <p class="card-title">Name:
-                            <%= data[i].NAME_MODULE %>
-                        </p>
-                        <h5 class="card-text">Description:
-                            <%= data[i].DESCRIPTION %>
-                        </h5>
-                        <h5 class="card-text"><small class="text-muted"><%= data[i].MOYEN_NOTE %> points</small></h5>
-                        <a href="#" class="btn btn-primary">access</a>
+    <%
+        var y;
+        for (var i=0; i < data.length; i = i+3)
+        {
+            %>
+                <div class="row">
+            <%
+            if (i+3 <= data.length)
+                y = 3;
+            else
+                y = data.length - i;
+
+            for (var z=0; z < y; z++)
+            {
+                %>
+                    <div class="col-md-4 text-center">
+                        <a href="/section/<%= i+z %>"> <img src="<%= data[i+z].LINK %>" height="250" width="250"/> </a>
+                        <p><%= data[i+z].NAME_SECTION %></p>
                     </div>
+                <%
+            }
+            %>
                 </div>
+            <%
+        }
+    %>
 
-        </h1>
-        <% } %>
-            <%- include('../_partial/_footer'); -%>
+<%- include('../_partial/_footer'); -%>

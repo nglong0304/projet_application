@@ -6,9 +6,8 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 const pool = require('../database/database.js');
 
-
 router.get("/", async function(req, res) {
-    var data = await pool.query('SELECT * FROM MODULE')
+    var data = await pool.query('SELECT * FROM SECTION')
 
     res.render("home/index", {
         data: data
@@ -86,5 +85,17 @@ router.get("/delegue", async function(req, res) {
 router.get("/logout", async function(req, res) {
     res.redirect("home")
 })
+
+router.get("/section/:p1", async function(req, res) {
+    var data_section = await pool.query('SELECT * FROM SECTION')
+    var data_module = await pool.query('SELECT * FROM MODULE')
+    var param = req.params.p1
+
+    res.render("home/section", {
+        data_section: data_section,
+        param: param,
+        data_module, data_module
+    });
+});
 
 module.exports = router;

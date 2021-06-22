@@ -1,0 +1,35 @@
+<%- include('../_partial/_header'); -%>
+
+	<%
+		var count=0;
+		if (!(param >= data_section.length) && param >= 0)
+		{
+			%>
+				<h1>Welcome to section <%= data_section[param].NAME_SECTION %> page</h1> <br />
+			<%
+			for (var i=0; i < data_module.length; i++)
+			{
+				if (data_module[i].ID_SECTION == data_section[param].ID_SECTION)
+				{
+					%>
+						<div class="col-md-4"><%= data_module[i].NAME_MODULE %></div>
+					<%
+					count++;
+				}
+			}
+			if (count == 0)
+			{
+				%>
+					<h3>No module for this section</h3>
+				<%
+			}
+		}
+		else
+		{
+			%>
+				<h1>This section do not existe</h1>
+			<%
+		}
+	%>
+
+<%- include ('../_partial/_footer'); -%>
