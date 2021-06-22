@@ -27,17 +27,46 @@
             <nav>
                 <ul class="nav navbar-nav navbar-right">
                     <% if(currentUser != null) { %>
-                        <li>
-                            <div class="dropdown">
-                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= currentUser%> !
-                                <span class="caret"></span></button>
-                                <ul class="dropdown-menu">
-                                  <li><a href="#">Add new Delegate</a></li>
-                                  <li><a href="#">Add new Teacher</a></li>
-                                  <li><a href="/logout">Logout</a></li>
-                                </ul>
-                              </div>
-                        </li>
+                        <% if(currentId == 0) { %> 
+                            <li>
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= currentUser%> !
+                                    <span class="caret"></span></button>
+                                    <ul class="dropdown-menu">
+                                      <li><a href="#">Add new User</a></li>
+                                      <li><a href="#">Check comments</a></li>
+                                      <li><a href="/logout">Logout</a></li>
+                                    </ul>
+                                  </div>
+                            </li>    
+                        <% } %>
+
+                        <% if(currentId == 1) { %> 
+                            <li>
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= currentUser%> !
+                                    <span class="caret"></span></button>
+                                    <ul class="dropdown-menu">
+                                      <li><a href="/logout">Logout</a></li>
+                                    </ul>
+                                  </div>
+                            </li>    
+                        <% } %>
+
+                        <% if(currentId == 2) { %> 
+                            <li>
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= currentUser%> !
+                                    <span class="caret"></span></button>
+                                    <ul class="dropdown-menu">
+                                      <li><a href="#">Profil</a></li>
+                                      <li><a href="#">Add module</a></li>
+                                      <li><a href="/logout">Logout</a></li>
+                                    </ul>
+                                  </div>
+                            </li>    
+                        <% } %>
+                        
                     <%}%>
                     <% if(currentUser == null) { %> 
                         <li>
