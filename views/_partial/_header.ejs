@@ -5,9 +5,9 @@
 <head>
     <meta charset="utf-8">
     <title>Evaluation Teacher</title>
-    <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" >
+    <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> 
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 </head>
 
@@ -23,59 +23,59 @@
                     <li><a href="/about">About</a></li>
                 </ul>
             </nav>
-            
+
             <nav>
                 <ul class="nav navbar-nav navbar-right">
                     <% if(currentUser != null) { %>
-                        <% if(currentId == 0) { %> 
+                        <% if(currentId == 0) { %>
                             <li>
                                 <div class="dropdown">
                                     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= currentUser%> !
                                     <span class="caret"></span></button>
                                     <ul class="dropdown-menu">
-                                      <li><a href="#">Add new User</a></li>
-                                      <li><a href="#">Check comments</a></li>
-                                      <li><a href="/logout">Logout</a></li>
+                                        <li><a href="#">Add new User</a></li>
+                                        <li><a href="#">Check comments</a></li>
+                                        <li><a href="/logout">Logout</a></li>
                                     </ul>
-                                  </div>
-                            </li>    
-                        <% } %>
+                                </div>
+                            </li>
+                            <% } %>
 
-                        <% if(currentId == 1) { %> 
-                            <li>
-                                <div class="dropdown">
-                                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= currentUser%> !
+                                <% if(currentId == 1) { %>
+                                    <li>
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= currentUser%> !
                                     <span class="caret"></span></button>
-                                    <ul class="dropdown-menu">
-                                      <li><a href="/logout">Logout</a></li>
-                                    </ul>
-                                  </div>
-                            </li>    
-                        <% } %>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="/logout">Logout</a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <% } %>
 
-                        <% if(currentId == 2) { %> 
-                            <li>
-                                <div class="dropdown">
-                                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= currentUser%> !
+                                        <% if(currentId == 2) { %>
+                                            <li>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= currentUser%> !
                                     <span class="caret"></span></button>
-                                    <ul class="dropdown-menu">
-                                      <li><a href="#">Profil</a></li>
-                                      <li><a href="#">Add module</a></li>
-                                      <li><a href="/logout">Logout</a></li>
-                                    </ul>
-                                  </div>
-                            </li>    
-                        <% } %>
-                        
-                    <%}%>
-                    <% if(currentUser == null) { %> 
-                        <li>
-                            <div class="usermenu"><span class="login">You are currently using guest access (<a href="/login">Log in</a>)</span></div>
-                        </li>    
-                    <% } %>
+                                                    <ul class="dropdown-menu">
+                                                        <li><a href="#">Profil</a></li>
+                                                        <li><a href="#">Add module</a></li>
+                                                        <li><a href="/logout">Logout</a></li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <% } %>
+
+                                                <%}%>
+                                                    <% if(currentUser == null) { %>
+                                                        <li>
+                                                            <div class="usermenu"><span class="login">You are currently using guest access (<a href="/login">Log in</a>)</span></div>
+                                                        </li>
+                                                        <% } %>
                 </ul>
             </nav>
-            
+
         </div>
     </div>
 

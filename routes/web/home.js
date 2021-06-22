@@ -40,19 +40,19 @@ router.post("/login", urlencodedParser, async function(req, res) {
             var id = encodeURIComponent(data_sql[i].ID_USER);
             var username = encodeURIComponent(data_sql[i].USER_NAME);
             if (data_sql[i].TYPE == 0) {
-                res.redirect("/?user=" + username +"&id=" +id)
+                res.redirect("/?user=" + username + "&id=" + id)
                 flag = true
                 break
             }
 
             if (data_sql[i].TYPE == 1) {
-                res.redirect("/delegue/?user=" + username +"&id=" +id)
+                res.redirect("/delegue/?user=" + username + "&id=" + id)
                 flag = true
                 break
             }
 
             if (data_sql[i].TYPE == 2) {
-                res.redirect("/prof/?user=" + username +"&id=" +id)
+                res.redirect("/prof/?user=" + username + "&id=" + id)
                 flag = true
                 break
             }
@@ -77,9 +77,28 @@ router.get("/admin", async function(req, res) {
 
 router.get("/delegue", async function(req, res) {
     var id = req.query.id;
-    // var data_sql = await pool.query("SELECT * FROM COMMENTAIRE JOIN MODULE AS (ID_MODULES) WHERE VALID IS NULL")
+    var data = await pool.query("SELECT * FROM REPONSES JOIN MODULE USING(ID_MODULES) WHERE VALIDE=0")
 
-    res.render("home/delegue")
+    res.render("home/delegue", {
+        data: data
+    })
+})
+
+router.post("/delegue", urlencodedParser, async function(req, res) {
+    var data = req.body
+    var sql_query_update = "UPDATE REPONSES SET VALIDE=1 WHERE ID_RESP=?"
+    var sql_query_del = "DELETE FROM REPONSES WHERE ID_RESP=?"
+    if (data.ret_value == "Accept") {
+        var ret = await pool.query(sql_query_update, data.id_resp)
+    } else if (data.ret_value == "Refuse") {
+        var ret = await pool.query(sql_query_del, data.id_resp)
+    }
+
+    var data_ret = await pool.query("SELECT * FROM REPONSES JOIN MODULE USING(ID_MODULES) WHERE VALIDE=0")
+
+    res.render("home/delegue", {
+        data: data_ret
+    })
 })
 
 router.get("/logout", async function(req, res) {

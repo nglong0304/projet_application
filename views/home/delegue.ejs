@@ -1,6 +1,42 @@
 <%- include('../_partial/_header'); -%>
 
     <h1>Welcome to delegue page</h1>
+    <% for(var i=0;i < data.length; i++){ %>
+        <h1>
+            <div class="card-deck">
+                <div class="card">
+
+                    <div class="card-body">
+                        <p class="card-title">Module:
+                            <%= data[i].NAME_MODULE %>
+                        </p>
+                        <h5 class="card-text">Commentaire:
+                            <%= data[i].REPONSE %>
+                        </h5>
+
+                        <form method="POST" action="/delegue">
+
+                            <p>
+                                <label class="radio-inline">
+                                <input type="radio" name="ret_value" id="inlineRadio1" value="Accept"> Accept
+                            </label>
+                                <label class="radio-inline">
+                                <input type="radio" name="ret_value" id="inlineRadio2" value="Refuse"> Refuse
+                            </label>
+
+                                <input type="hidden" name="id_resp" value=<%=data[i].ID_RESP%> >
+                                <div>
+                                    <input type="submit" class="btn btn-primary" value="Apply" />
+                                </div>
+                            </p>
+
+                        </form>
+                    </div>
 
 
-    <%- include ('../_partial/_footer'); -%>
+                </div>
+
+        </h1>
+        <% } %>
+
+            <%- include ('../_partial/_footer'); -%>
