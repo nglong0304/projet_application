@@ -6,9 +6,8 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 const pool = require('../database/database.js');
 
-
 router.get("/", async function(req, res) {
-    var data = await pool.query('SELECT * FROM MODULE')
+    var data = await pool.query('SELECT * FROM SECTION')
 
     res.render("home/index", {
         data: data
@@ -38,23 +37,22 @@ router.post("/login", urlencodedParser, async function(req, res) {
     for (var i = 0; i < data_sql.length; i++) {
         if (data.username == data_sql[i].USER_NAME && data.password == data_sql[i].USER_PASSWORD) {
 
+            var id = encodeURIComponent(data_sql[i].ID_USER);
+            var username = encodeURIComponent(data_sql[i].USER_NAME);
             if (data_sql[i].TYPE == 0) {
-                var string = encodeURIComponent(data_sql[i].ID_USER);
-                res.redirect("/admin/?id=" + string)
+                res.redirect("/?user=" + username + "&id=" + id)
                 flag = true
                 break
             }
 
             if (data_sql[i].TYPE == 1) {
-                var string = encodeURIComponent(data_sql[i].ID_USER);
-                res.redirect("/delegue/?id=" + string)
+                res.redirect("/delegue/?user=" + username + "&id=" + id)
                 flag = true
                 break
             }
 
             if (data_sql[i].TYPE == 2) {
-                var string = encodeURIComponent(data_sql[i].ID_USER);
-                res.redirect("/prof/?id=" + string)
+                res.redirect("/prof/?user=" + username + "&id=" + id)
                 flag = true
                 break
             }
@@ -104,6 +102,22 @@ router.post("/delegue", urlencodedParser, async function(req, res) {
     })
 })
 
+router.get("/logout", async function(req, res) {
+    res.redirect("home")
+})
 
+router.get("/section/:p1", async function(req, res) {
+    var data_section = await pool.query('SELECT * FROM SECTION')
+    var data_module = await pool.query('SELECT * FROM MODULE')
+    var data_users = await pool.query('SELECT * FROM USERS')
+    var param = req.params.p1
+
+    res.render("home/section", {
+        data_section: data_section,
+        param: param,
+        data_module: data_module,
+        data_users: data_users
+    });
+});
 
 module.exports = router;
