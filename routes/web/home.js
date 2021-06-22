@@ -146,4 +146,22 @@ router.get("/section/:p1", async function(req, res) {
     });
 });
 
+router.get("/module/:p1", async function(req, res) {
+    var data_section = await pool.query('SELECT * FROM SECTION')
+    var data_module = await pool.query('SELECT * FROM MODULE')
+    var data_users = await pool.query('SELECT * FROM USERS')
+    var data_question = await pool.query('SELECT * FROM QUESTIONS')
+    var data_quest_mod = await pool.query('SELECT * FROM QUESTION_MODULE')
+    var param = req.params.p1
+
+    res.render("home/question", {
+        data_section: data_section,
+        param: param,
+        data_module: data_module,
+        data_users: data_users,
+        data_question: data_question,
+        data_quest_mod: data_quest_mod
+    });
+});
+
 module.exports = router;
