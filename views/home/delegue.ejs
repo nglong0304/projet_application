@@ -11,22 +11,24 @@
                             <%= data[i].NAME_MODULE %>
                         </p>
                         <h5 class="card-text">Commentaire:
-                            <%= data[i].CMT %>
+                            <%= data[i].REPONSE %>
                         </h5>
 
-                        <form class="" method="POST" action="/delegue">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="Accept" id="inlineRadio1" value="Accept">
-                                <label class="form-check-label" for="inlineRadio1">Accept</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="Refuse" id="inlineRadio2" value="Refuse">
-                                <label class="form-check-label" for="inlineRadio2">Refuse</label>
-                            </div>
-                            <div>
-                                <input type="hidden" name="id_cmt" value=<%=data[i].ID_CMT%> >
-                                <input type="submit" class="btn btn-primary" value="Apply" />
-                            </div>
+                        <form method="POST" action="/delegue">
+
+                            <p>
+                                <label class="radio-inline">
+                                <input type="radio" name="ret_value" id="inlineRadio1" value="Accept"> Accept
+                            </label>
+                                <label class="radio-inline">
+                                <input type="radio" name="ret_value" id="inlineRadio2" value="Refuse"> Refuse
+                            </label>
+
+                                <input type="hidden" name="id_resp" value=<%=data[i].ID_RESP%> >
+                                <div>
+                                    <input type="submit" class="btn btn-primary" value="Apply" />
+                                </div>
+                            </p>
 
                         </form>
                     </div>
