@@ -37,24 +37,22 @@ router.post("/login", urlencodedParser, async function(req, res) {
     for (var i = 0; i < data_sql.length; i++) {
         if (data.username == data_sql[i].USER_NAME && data.password == data_sql[i].USER_PASSWORD) {
 
+            var id = encodeURIComponent(data_sql[i].ID_USER);
+            var username = encodeURIComponent(data_sql[i].USER_NAME);
             if (data_sql[i].TYPE == 0) {
-                var id = encodeURIComponent(data_sql[i].ID_USER);
-                var username = encodeURIComponent(data_sql[i].USER_NAME);
-                res.redirect("/admin/?user=" + username +"&id=" +id)
+                res.redirect("/?user=" + username +"&id=" +id)
                 flag = true
                 break
             }
 
             if (data_sql[i].TYPE == 1) {
-                var string = encodeURIComponent(data_sql[i].ID_USER);
-                res.redirect("/delegue/?id=" + string)
+                res.redirect("/delegue/?user=" + username +"&id=" +id)
                 flag = true
                 break
             }
 
             if (data_sql[i].TYPE == 2) {
-                var string = encodeURIComponent(data_sql[i].ID_USER);
-                res.redirect("/prof/?id=" + string)
+                res.redirect("/prof/?user=" + username +"&id=" +id)
                 flag = true
                 break
             }
