@@ -38,8 +38,9 @@ router.post("/login", urlencodedParser, async function(req, res) {
         if (data.username == data_sql[i].USER_NAME && data.password == data_sql[i].USER_PASSWORD) {
 
             if (data_sql[i].TYPE == 0) {
-                var string = encodeURIComponent(data_sql[i].ID_USER);
-                res.redirect("/admin/?id=" + string)
+                var id = encodeURIComponent(data_sql[i].ID_USER);
+                var username = encodeURIComponent(data_sql[i].USER_NAME);
+                res.redirect("/admin/?user=" + username +"&id=" +id)
                 flag = true
                 break
             }
@@ -81,6 +82,10 @@ router.get("/delegue", async function(req, res) {
     // var data_sql = await pool.query("SELECT * FROM COMMENTAIRE JOIN MODULE AS (ID_MODULES) WHERE VALID IS NULL")
 
     res.render("home/delegue")
+})
+
+router.get("/logout", async function(req, res) {
+    res.redirect("home")
 })
 
 module.exports = router;
