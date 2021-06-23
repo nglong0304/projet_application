@@ -126,6 +126,30 @@ router.get("/prof", async function(req, res) {
     })
 })
 
+router.get("/prof/module/:p1", async function(req, res) {
+    var param = req.params.p1
+    const { userId } = req.session;
+
+    if (typeof(userId) == 'undefined')
+        res.redirect("../");
+    if (typeof(userId.username) == 'undefined')
+        res.redirect("../");
+    var data_sql = await pool.query("SELECT * FROM USERS")
+    var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
+    for (var i = 0; i < data_sql.length; i++) 
+        if (userId.username == data_sql[i].USER_NAME)
+            if (userId.passwd != data_sql[i].USER_PASSWORD)
+                res.redirect("/logout");
+
+    var data_module = await pool.query('SELECT * FROM MODULE');
+    if (param < 0 || param >= data_module.length || userId.id_user != data_module[param].ID_USER)
+        res.redirect("/prof");
+    res.render("home/prof_show_module", {
+        userId:userId,
+        data_module: data_module
+    });
+});
+
 router.get("/admin", async function(req, res) {
     var id = req.query.id;
     res.render("home/admin")
