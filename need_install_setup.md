@@ -4,6 +4,8 @@ install express   'npm install express --save'
 install path, ejs, mariadb, boy-parser : 'sudo npm install path ejs mariadb body-parser --save'
 
 install mariadb in your computer;
+npm install md5
+npm install --save express-session
 
 * Setup for database: 
 - In file database.js, you need change user and password to match your mariadb.
