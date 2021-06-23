@@ -146,7 +146,7 @@ router.get("/section/:p1", async function(req, res) {
     });
 });
 
-router.get("/module/:p1", async function(req, res) {
+router.get("/questionnaire/:p1", async function(req, res) {
     var data_section = await pool.query('SELECT * FROM SECTION')
     var data_module = await pool.query('SELECT * FROM MODULE')
     var data_users = await pool.query('SELECT * FROM USERS')
@@ -164,7 +164,7 @@ router.get("/module/:p1", async function(req, res) {
     });
 });
 
-router.post("/module/:p1", urlencodedParser, async function(req, res) {
+router.post("/questionnaire/:p1", urlencodedParser, async function(req, res) {
     var data_section = await pool.query('SELECT * FROM SECTION')
     var data_module = await pool.query('SELECT * FROM MODULE')
     var data_question = await pool.query('SELECT * FROM QUESTIONS')
@@ -195,5 +195,28 @@ router.post("/module/:p1", urlencodedParser, async function(req, res) {
 router.get("/admin/add_user", async function(req, res) {
     res.render("home/add_user")
 })
+router.get("/module/:p1", async function(req, res) {
+    var data_module = await pool.query('SELECT * FROM MODULE')
+    var param = req.params.p1
+
+    res.render("home/ask_key", {
+        data_module: data_module,
+        param: param
+    });
+});
+
+router.post("/module/:p1", urlencodedParser, async function(req, res) {
+    var data_module = await pool.query('SELECT * FROM MODULE')
+    var param = req.params.p1
+    var reponses = req.body
+
+    if (param < 0 || param >= data_module.length)
+        res.redirect("home");
+    if (data_module[param].CLE == reponses.key) {
+        res.redirect("../questionnaire/" + param)
+    } else {
+        res.redirect("../module/" + param)
+    }
+});
 
 module.exports = router;
