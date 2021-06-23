@@ -28,9 +28,9 @@ router.get("/login", function(req, res) {
 
 router.post("/login", urlencodedParser, async function(req, res) {
     var data = req.body
-
     var data_sql = await pool.query("SELECT * FROM USERS")
-
+    var input_password = await pool.query("SELECT MD5(?) as md5", data.password)
+    data.password = input_password[0].md5
 
     var flag = false
 
@@ -129,7 +129,7 @@ router.post("/admin/comments", urlencodedParser, async function(req, res) {
 })
 
 router.get("/logout", async function(req, res) {
-    res.redirect("home")
+    res.redirect("/")
 })
 
 router.get("/section/:p1", async function(req, res) {
@@ -176,13 +176,11 @@ router.post("/module/:p1", urlencodedParser, async function(req, res) {
     if (param < 0 || param >= data_module.length)
         res.redirect("home");
     var input_name = "";
-    var count=0;
-    for (var i=0; i < data_quest_mod.length; i++)
-    {
-        if (data_quest_mod[i].ID_MODULES == param)
-        {
+    var count = 0;
+    for (var i = 0; i < data_quest_mod.length; i++) {
+        if (data_quest_mod[i].ID_MODULES == param) {
             input_name = "reponse_" + i.toString();
-            pool.query('INSERT INTO REPONSES VALUE('+(data_reponse.length+count)+','+data_quest_mod[i].ID_QUESTION+',"'+reponses[input_name]+'",'+data_quest_mod[i].ID_MODULES+', 1, 0)');
+            pool.query('INSERT INTO REPONSES VALUE(' + (data_reponse.length + count) + ',' + data_quest_mod[i].ID_QUESTION + ',"' + reponses[input_name] + '",' + data_quest_mod[i].ID_MODULES + ', 1, 0)');
             count++;
         }
     }
@@ -193,5 +191,9 @@ router.post("/module/:p1", urlencodedParser, async function(req, res) {
         param: param
     });
 });
+
+router.get("/admin/add_user", async function(req, res) {
+    res.render("home/add_user")
+})
 
 module.exports = router;

@@ -8,7 +8,7 @@ drop table SECTION;
 CREATE TABLE USERS(
     ID_USER INT,
     USER_NAME VARCHAR(50),
-    USER_PASSWORD VARCHAR(255),
+    USER_PASSWORD VARCHAR(32),
     TYPE INT,
     PRIMARY KEY (ID_USER)
 );
@@ -24,12 +24,14 @@ CREATE TABLE MODULE(
     NAME_MODULE VARCHAR(255),
     DESCRIPTION VARCHAR(1024),
     ID_SECTION INT,
-    CLE VARCHAR(50),
+    CLE VARCHAR(32),
     MOYEN_NOTE FLOAT,
     PRIMARY KEY (ID_MODULES),
     FOREIGN KEY (ID_USER) REFERENCES USERS(ID_USER),
     FOREIGN KEY (ID_SECTION) REFERENCES SECTION(ID_SECTION)
 );
+-- ID_MODULSES==NULL if TYPE=0
+
 CREATE TABLE QUESTIONS(
     ID_QUESTION INT,
     QUESTION VARCHAR(100),
@@ -61,18 +63,20 @@ INSERT INTO SECTION VALUE(3, 'MRI 3A', '/images/mri.jpg');
 INSERT INTO SECTION VALUE(4, 'MRI 4A', '/images/mri.jpg');
 INSERT INTO SECTION VALUE(5, 'MRI 5A', '/images/mri.jpg');
 
-INSERT INTO USERS VALUE(0, 'admin', 'admin', 0);
-INSERT INTO USERS VALUE(1, 'delegues', 'delegues', 1);
-INSERT INTO USERS VALUE(2, 'prof1', 'prof1', 2);
-INSERT INTO USERS VALUE(3, 'prof2', 'prof2', 2);
-INSERT INTO USERS VALUE(4, 'prof3', 'prof3', 2);
+INSERT INTO USERS VALUE(0, 'admin', '21232f297a57a5a743894a0e4a801fc3', 0);
+INSERT INTO USERS VALUE(1, 'delegues', '33f278fd18c8d6c7c17073457ce1738e', 1);
+INSERT INTO USERS VALUE(2, 'prof1', '4f5fdb3de5aa701eae2961743a00c01c', 2);
+INSERT INTO USERS VALUE(3, 'prof2', 'c52a44b3378c9ef375b7dadecd783921', 2);
+INSERT INTO USERS VALUE(4, 'prof3', '1eff3c8299b8fa754815d590badcf98f', 2);
+-- pass: admin, delegues, prof1, prof2, prof3
 
-INSERT INTO MODULE VALUE(0, 2, 'Réseaux', 'Configuration de réseaux internet', 0,' cle1', 3);
-INSERT INTO MODULE VALUE(1, 3, 'Prog. System', 'Programmation d un OS', 0, 'cle2', 4);
-INSERT INTO MODULE VALUE(2, 4, 'Future ?', 'Tu peux y arrivé ?', 5, 'cle3', 5);
-INSERT INTO MODULE VALUE(3, 2, 'Programmation C', 'Apprendre a programmer en C', 0,' cle4', 3);
-INSERT INTO MODULE VALUE(4, 3, 'Base de données', 'Apprendre a se servir des bases de données', 0,' cle5', 3);
-INSERT INTO MODULE VALUE(5, 4, 'Web', 'Les bases des langage du web', 0,' cle6', 3);
+INSERT INTO MODULE VALUE(0, 2, 'Réseaux', 'Configuration de réseaux internet', 0,'3680e659eee9880c217e9a7408410f16', 3);
+INSERT INTO MODULE VALUE(1, 3, 'Prog. System', 'Programmation d un OS', 0, '3680e659eee9880c217e9a7408410f16', 4);
+INSERT INTO MODULE VALUE(2, 4, 'Future ?', 'Tu peux y arrivé ?', 5, '4ad6af9685f5e541f6e4cbecea729c04', 5);
+INSERT INTO MODULE VALUE(3, 2, 'Programmation C', 'Apprendre a programmer en C', 0,'909a02c2929ada46f1b21c67e37b2ecd', 3);
+INSERT INTO MODULE VALUE(4, 3, 'Base de données', 'Apprendre a se servir des bases de données', 0,'f50e5169c113f967c47dc750d83b1fa9', 3);
+INSERT INTO MODULE VALUE(5, 4, 'Web', 'Les bases des langage du web', 0,'5d2aee9403c4b8b77317c9e046db7e47', 3);
+-- cle: cle1,cle2,cle3,cle4,cle5,cle6
 
 INSERT INTO QUESTIONS VALUE(0, 'Comment avez-vous trouver le cours ?', 0);
 INSERT INTO QUESTIONS VALUE(1, 'Comment avez-vous trouver le TD ?', 0);
