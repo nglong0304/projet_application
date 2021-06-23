@@ -23,10 +23,8 @@ router.get("/", async function(req, res) {
     const { userId } = req.session;
 
     if (!(typeof(userId) == 'undefined'))
-    {
         if (!(typeof(userId.username) == 'undefined'))
             res.redirect("/prof");
-    }
 
     var data = await pool.query('SELECT * FROM SECTION');
 
@@ -52,10 +50,6 @@ router.get("/logout", async function(req, res) {
 
     req.session.destroy();
     res.redirect("../");
-});
-
-router.get("/logout", function(req, res) {
-    res.render("../");
 });
 
 router.post("/login", urlencodedParser, async function(req, res) {
