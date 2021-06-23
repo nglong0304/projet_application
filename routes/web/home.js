@@ -20,7 +20,15 @@ router.use(session({
 }));
 
 router.get("/", async function(req, res) {
-    var data = await pool.query('SELECT * FROM SECTION')
+    const { userId } = req.session;
+
+    if (!(typeof(userId) == 'undefined'))
+    {
+        if (!(typeof(userId.username) == 'undefined'))
+            res.redirect("/prof");
+    }
+
+    var data = await pool.query('SELECT * FROM SECTION');
 
     res.render("home/index", {
         data: data
@@ -37,6 +45,10 @@ router.get("/about", function(req, res) {
 
 router.get("/login", function(req, res) {
     res.render("home/login");
+});
+
+router.get("/logout", function(req, res) {
+    res.render("../");
 });
 
 router.post("/login", urlencodedParser, async function(req, res) {
@@ -68,7 +80,8 @@ router.post("/login", urlencodedParser, async function(req, res) {
                 const { userId } = req.session;
                 username = data.username;
                 var passwd = data_sql[i].USER_PASSWORD;
-                var user = { username, passwd };
+                var id_user = data_sql[i].ID_USER;
+                var user = { username, passwd, id_user };
                 req.session.userId = user;
                 res.redirect("/prof")
                 flag = true
@@ -88,7 +101,16 @@ router.get("/prof", async function(req, res) {
 
     if (typeof(userId) == 'undefined')
         res.redirect("../");
-    res.render("home/prof")
+    if (typeof(userId.username) == 'undefined')
+        res.redirect("../");
+
+    var data_section = await pool.query('SELECT * FROM SECTION')
+    var data_module = await pool.query('SELECT * FROM MODULE WHERE ID_USER='+userId.id_user)
+    res.render("home/prof", {
+        userId: userId,
+        data_section: data_section,
+        data_module: data_module
+    })
 })
 
 router.get("/admin", async function(req, res) {
@@ -150,7 +172,8 @@ router.post("/admin/comments", urlencodedParser, async function(req, res) {
 })
 
 router.get("/logout", async function(req, res) {
-    res.redirect("/")
+    req.session.destroy();
+    res.render("home/index");
 })
 
 router.get("/section/:p1", async function(req, res) {
