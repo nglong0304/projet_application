@@ -12,9 +12,21 @@
     		{
     			%>
     				<div class="col-md-4 text-center">
-							<a href="/prof/module/<%= data_module[i].ID_MODULES %>"><h3><%= data_module[i].NAME_MODULE %></h3></a>
-							<h4><%= data_module[i].DESCRIPTION %></h4>
-						</div>
+                        <%
+                            for (var y=0; y < data_section.length; y++)
+                            {
+                                if (data_section[y].ID_SECTION == data_module[i].ID_SECTION)
+                                {
+                                    %>
+                                        <h5><%= data_section[y].NAME_SECTION %> :</h5>
+                                    <%
+                                    break;
+                                }
+                            }
+                        %>
+						<a href="/prof/module/<%= data_module[i].ID_MODULES %>"><h3><%= data_module[i].NAME_MODULE %></h3></a>
+						<h4><%= data_module[i].DESCRIPTION %></h4>
+					</div>
     			<%
     		}
     		%>
