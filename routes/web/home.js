@@ -190,8 +190,6 @@ router.get("/prof/module/:p1", async function(req, res) {
     });
 });
 
-
-
 router.get("/delegue", async function(req, res) {
     const { userId } = req.session;
 
