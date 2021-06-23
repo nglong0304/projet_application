@@ -4,12 +4,15 @@
 		if (param >= 0 && param < data_module.length)
 		{
 			%>
-				<h1>Key for "<%= data_module[param].NAME_MODULE %>"</h1>
+				<h1>Clef d'inscription de"<%= data_module[param].NAME_MODULE %>"</h1>
 
-				<form method="post">
-					<label>Key :</label>
-					<input type="password" name="key" required/>
-					<input type="submit" />
+
+				<form method="POST">
+					<div class="form-group">
+						<label for="example">Clef</label>
+						<input type="password"  name="key" required/>
+					</div>
+					<button type="submit" class="btn btn-primary">M'inscrire</button>
 				</form>
 			<%
 		}
