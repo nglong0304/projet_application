@@ -110,6 +110,12 @@ router.get("/prof", async function(req, res) {
         res.redirect("../");
     if (typeof(userId.username) == 'undefined')
         res.redirect("../");
+    var data_sql = await pool.query("SELECT * FROM USERS")
+    var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
+    for (var i = 0; i < data_sql.length; i++) 
+        if (userId.username == data_sql[i].USER_NAME)
+            if (userId.passwd != data_sql[i].USER_PASSWORD)
+                res.redirect("/logout");
 
     var data_section = await pool.query('SELECT * FROM SECTION')
     var data_module = await pool.query('SELECT * FROM MODULE WHERE ID_USER='+userId.id_user)
