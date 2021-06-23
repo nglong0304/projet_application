@@ -20,23 +20,44 @@ router.use(session({
 }));
 
 router.get("/", async function(req, res) {
-    var data = await pool.query('SELECT * FROM SECTION')
+    var type_user = req.session.type_user
+    if (typeof(type_user) == 'undefined') {
+        type_user = null
+    }
 
-    res.render("home/index", {
-        data: data
-    });
+    if (type_user == "delegue") {
+        res.redirect("/delegue")
+    } else {
+        var data = await pool.query('SELECT * FROM SECTION')
+
+        res.render("home/index", {
+            data: data,
+            type_user: type_user
+        });
+    }
+
 });
 
 router.get("/home", function(req, res) {
-    res.render("home/home");
+    res.render("home/home", {
+        type_user: null
+    });
 });
 
 router.get("/about", function(req, res) {
-    res.render("home/about");
+    var type_user = req.session.type_user
+    if (typeof(type_user) == 'undefined') {
+        type_user = null
+    }
+    res.render("home/about", {
+        type_user: type_user
+    });
 });
 
 router.get("/login", function(req, res) {
-    res.render("home/login");
+    res.render("home/login", {
+        type_user: null
+    });
 });
 
 router.post("/login", urlencodedParser, async function(req, res) {
@@ -53,14 +74,17 @@ router.post("/login", urlencodedParser, async function(req, res) {
             var id = encodeURIComponent(data_sql[i].ID_USER);
             var username = encodeURIComponent(data_sql[i].USER_NAME);
             if (data_sql[i].TYPE == 0) {
-                res.redirect("/?user=" + username + "&id=" + id)
+                req.session.type_user = "admin"
+                res.redirect("/admin/?user=" + username + "&id=" + id)
                 flag = true
                 break
             }
 
             if (data_sql[i].TYPE == 1) {
+                req.session.type_user = "delegue"
                 res.redirect("/delegue/?user=" + username + "&id=" + id)
                 flag = true
+
                 break
             }
 
@@ -70,6 +94,7 @@ router.post("/login", urlencodedParser, async function(req, res) {
                 var passwd = data_sql[i].USER_PASSWORD;
                 var user = { username, passwd };
                 req.session.userId = user;
+                req.session.type_user = "prof"
                 res.redirect("/prof")
                 flag = true
                 break
@@ -78,34 +103,60 @@ router.post("/login", urlencodedParser, async function(req, res) {
         }
     }
     if (!flag) {
-        res.render("home/login");
+        res.render("home/login", {
+            type_user: null
+        });
     }
 
 })
+
+
+router.get("/admin", async function(req, res) {
+    const type_user = req.session.type_user;
+    if (type_user == 'admin') {
+        var data = await pool.query('SELECT * FROM SECTION')
+        res.render("home/index", {
+            data: data,
+            type_user: 'admin'
+        });
+    } else {
+        res.redirect("../");
+    }
+});
 
 router.get("/prof", async function(req, res) {
     const { userId } = req.session;
 
     if (typeof(userId) == 'undefined')
         res.redirect("../");
-    res.render("home/prof")
-})
-
-router.get("/admin", async function(req, res) {
-    var id = req.query.id;
-    res.render("home/admin")
-})
-
-router.get("/delegue", async function(req, res) {
-    var id = req.query.id;
-    var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
-
-    res.render("home/delegue", {
-        data: data
+    res.render("home/prof", {
+        type_user: 'prof'
     })
 })
 
+
+
+router.get("/delegue", async function(req, res) {
+
+    const type_user = req.session.type_user;
+    if (type_user == 'delegue') {
+        var id = req.query.id;
+        var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
+
+        res.render("home/delegue", {
+            data: data,
+            type_user: type_user
+        })
+    } else {
+        res.redirect("/delegue");
+    }
+
+
+})
+
 router.post("/delegue", urlencodedParser, async function(req, res) {
+    const type_user = req.session.type_user;
+
     var data = req.body
     var sql_query_update = "UPDATE REPONSES SET VALIDE=1 WHERE ID_RESP=?"
     var sql_query_del = "DELETE FROM REPONSES WHERE ID_RESP=?"
@@ -118,21 +169,26 @@ router.post("/delegue", urlencodedParser, async function(req, res) {
     var data_ret = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
 
     res.render("home/delegue", {
-        data: data_ret
+        data: data_ret,
+        type_user: type_user
     })
 })
 
 
 router.get("/admin/comments", async function(req, res) {
+    const type_user = req.session.type_user;
     var id = req.query.id;
     var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
 
     res.render("home/delegue", {
-        data: data
+        data: data,
+        type_user: 'admin'
     })
 })
 
 router.post("/admin/comments", urlencodedParser, async function(req, res) {
+    const type_user = req.session.type_user;
+
     var data = req.body
     var sql_query_update = "UPDATE REPONSES SET VALIDE=1 WHERE ID_RESP=?"
     var sql_query_del = "DELETE FROM REPONSES WHERE ID_RESP=?"
@@ -145,15 +201,21 @@ router.post("/admin/comments", urlencodedParser, async function(req, res) {
     var data_ret = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
 
     res.render("home/delegue", {
-        data: data_ret
+        data: data_ret,
+        type_user: "admin"
     })
 })
 
 router.get("/logout", async function(req, res) {
+    req.session.destroy();
     res.redirect("/")
 })
 
 router.get("/section/:p1", async function(req, res) {
+    const type_user = req.session.type_user;
+    if (typeof(type_user) == 'undefined') {
+        type_user = null
+    }
     var data_section = await pool.query('SELECT * FROM SECTION')
     var data_module = await pool.query('SELECT * FROM MODULE')
     var data_users = await pool.query('SELECT * FROM USERS')
@@ -163,11 +225,16 @@ router.get("/section/:p1", async function(req, res) {
         data_section: data_section,
         param: param,
         data_module: data_module,
-        data_users: data_users
+        data_users: data_users,
+        type_user: type_user
     });
 });
 
 router.get("/questionnaire/:p1", async function(req, res) {
+    const type_user = req.session.type_user;
+    if (typeof(type_user) == 'undefined') {
+        type_user = null
+    }
     var data_section = await pool.query('SELECT * FROM SECTION')
     var data_module = await pool.query('SELECT * FROM MODULE')
     var data_users = await pool.query('SELECT * FROM USERS')
@@ -189,11 +256,16 @@ router.get("/questionnaire/:p1", async function(req, res) {
         data_module: data_module,
         data_users: data_users,
         data_question: data_question,
-        data_quest_mod: data_quest_mod
+        data_quest_mod: data_quest_mod,
+        type_user: type_user
     });
 });
 
 router.post("/questionnaire/:p1", urlencodedParser, async function(req, res) {
+    const type_user = req.session.type_user;
+    if (typeof(type_user) == 'undefined') {
+        type_user = null
+    }
     var data_section = await pool.query('SELECT * FROM SECTION')
     var data_module = await pool.query('SELECT * FROM MODULE')
     var data_question = await pool.query('SELECT * FROM QUESTIONS')
@@ -227,7 +299,8 @@ router.post("/questionnaire/:p1", urlencodedParser, async function(req, res) {
     res.render("home/valid_reponse", {
         data_section: data_section,
         data_module: data_module,
-        param: param
+        param: param,
+        type_user: type_user
     });
 });
 
@@ -235,11 +308,14 @@ router.get("/admin/add_user", async function(req, res) {
 
     res.render("home/add_user", {
         warn_username: false,
-        warn_password: false
+        warn_password: false,
+        type_user: "admin"
     })
 })
 
 router.post("/admin/add_user", urlencodedParser, async function(req, res) {
+    const type_user = req.session.type_user;
+
     var data = req.body
     var data_users = await pool.query('SELECT * FROM USERS')
     var warn_username = false
@@ -263,19 +339,25 @@ router.post("/admin/add_user", urlencodedParser, async function(req, res) {
 
     res.render("home/add_user", {
         warn_username: warn_username,
-        warn_password: warn_password
+        warn_password: warn_password,
+        type_user: "admin"
     })
 
 
 })
 
 router.get("/module/:p1", async function(req, res) {
+    const type_user = req.session.type_user;
+    if (typeof(type_user) == 'undefined') {
+        type_user = null
+    }
     var data_module = await pool.query('SELECT * FROM MODULE')
     var param = req.params.p1
 
     res.render("home/ask_key", {
         data_module: data_module,
-        param: param
+        param: param,
+        type_user: type_user
     });
 });
 
