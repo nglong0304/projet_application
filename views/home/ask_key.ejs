@@ -1,0 +1,18 @@
+<%- include('../_partial/_header'); -%>
+
+	<%
+		if (param >= 0 && param < data_module.length)
+		{
+			%>
+				<h1>Key for "<%= data_module[param].NAME_MODULE %>"</h1>
+
+				<form method="post">
+					<label>Key :</label>
+					<input type="password" name="key" required/>
+					<input type="submit" />
+				</form>
+			<%
+		}
+	%>
+
+<%- include('../_partial/_footer'); -%>

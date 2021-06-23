@@ -67,12 +67,12 @@ INSERT INTO USERS VALUE(2, 'prof1', 'prof1', 2);
 INSERT INTO USERS VALUE(3, 'prof2', 'prof2', 2);
 INSERT INTO USERS VALUE(4, 'prof3', 'prof3', 2);
 
-INSERT INTO MODULE VALUE(0, 2, 'Réseaux', 'Configuration de réseaux internet', 0,' cle1', 3);
+INSERT INTO MODULE VALUE(0, 2, 'Réseaux', 'Configuration de réseaux internet', 0,'cle1', 3);
 INSERT INTO MODULE VALUE(1, 3, 'Prog. System', 'Programmation d un OS', 0, 'cle2', 4);
 INSERT INTO MODULE VALUE(2, 4, 'Future ?', 'Tu peux y arrivé ?', 5, 'cle3', 5);
-INSERT INTO MODULE VALUE(3, 2, 'Programmation C', 'Apprendre a programmer en C', 0,' cle4', 3);
-INSERT INTO MODULE VALUE(4, 3, 'Base de données', 'Apprendre a se servir des bases de données', 0,' cle5', 3);
-INSERT INTO MODULE VALUE(5, 4, 'Web', 'Les bases des langage du web', 0,' cle6', 3);
+INSERT INTO MODULE VALUE(3, 2, 'Programmation C', 'Apprendre a programmer en C', 0,'cle4', 3);
+INSERT INTO MODULE VALUE(4, 3, 'Base de données', 'Apprendre a se servir des bases de données', 0,'cle5', 3);
+INSERT INTO MODULE VALUE(5, 4, 'Web', 'Les bases des langage du web', 0,'cle6', 3);
 
 INSERT INTO QUESTIONS VALUE(0, 'Comment avez-vous trouver le cours ?', 0);
 INSERT INTO QUESTIONS VALUE(1, 'Comment avez-vous trouver le TD ?', 0);
