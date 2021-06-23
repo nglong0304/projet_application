@@ -236,4 +236,8 @@ router.post("/module/:p1", urlencodedParser, async function(req, res) {
     }
 });
 
+router.get("/source", function(req, res) {
+    res.render("home/source");
+});
+
 module.exports = router;
