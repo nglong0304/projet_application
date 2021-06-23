@@ -21,6 +21,9 @@ router.use(session({
 
 router.get("/", async function(req, res) {
     var type_user = req.session.type_user
+    var data = await pool.query('SELECT * FROM SECTION');
+    const { userId } = req.session;
+
     if (typeof(type_user) == 'undefined') {
         type_user = null
     }
@@ -35,6 +38,12 @@ router.get("/", async function(req, res) {
             type_user: type_user
         });
     }
+
+    if (!(typeof(userId) == 'undefined')) {
+        if (!(typeof(userId.username) == 'undefined'))
+            res.redirect("/prof");
+    }
+
 
 });
 
@@ -58,6 +67,17 @@ router.get("/login", function(req, res) {
     res.render("home/login", {
         type_user: null
     });
+});
+
+router.get("/logout", async function(req, res) {
+    const { userId } = req.session
+
+    req.session.destroy();
+    res.redirect("../");
+});
+
+router.get("/logout", function(req, res) {
+    res.render("../");
 });
 
 router.post("/login", urlencodedParser, async function(req, res) {
@@ -92,7 +112,8 @@ router.post("/login", urlencodedParser, async function(req, res) {
                 const { userId } = req.session;
                 username = data.username;
                 var passwd = data_sql[i].USER_PASSWORD;
-                var user = { username, passwd };
+                var id_user = data_sql[i].ID_USER;
+                var user = { username, passwd, id_user };
                 req.session.userId = user;
                 req.session.type_user = "prof"
                 res.redirect("/prof")
@@ -129,10 +150,49 @@ router.get("/prof", async function(req, res) {
 
     if (typeof(userId) == 'undefined')
         res.redirect("../");
+    if (typeof(userId.username) == 'undefined')
+        res.redirect("../");
+    var data_sql = await pool.query("SELECT * FROM USERS")
+    var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
+    for (var i = 0; i < data_sql.length; i++)
+        if (userId.username == data_sql[i].USER_NAME)
+            if (userId.passwd != data_sql[i].USER_PASSWORD)
+                res.redirect("/logout");
+
+    var data_section = await pool.query('SELECT * FROM SECTION')
+    var data_module = await pool.query('SELECT * FROM MODULE WHERE ID_USER=' + userId.id_user)
     res.render("home/prof", {
+        userId: userId,
+        data_section: data_section,
+        data_module: data_module,
         type_user: 'prof'
     })
 })
+
+router.get("/prof/module/:p1", async function(req, res) {
+    var param = req.params.p1
+    const { userId } = req.session;
+
+    if (typeof(userId) == 'undefined')
+        res.redirect("../");
+    if (typeof(userId.username) == 'undefined')
+        res.redirect("../");
+    var data_sql = await pool.query("SELECT * FROM USERS")
+    var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
+    for (var i = 0; i < data_sql.length; i++)
+        if (userId.username == data_sql[i].USER_NAME)
+            if (userId.passwd != data_sql[i].USER_PASSWORD)
+                res.redirect("/logout");
+
+    var data_module = await pool.query('SELECT * FROM MODULE');
+    if (param < 0 || param >= data_module.length || userId.id_user != data_module[param].ID_USER)
+        res.redirect("/prof");
+    res.render("home/prof_show_module", {
+        userId: userId,
+        data_module: data_module,
+        type_user: 'prof'
+    });
+});
 
 
 
@@ -212,7 +272,7 @@ router.get("/logout", async function(req, res) {
 })
 
 router.get("/section/:p1", async function(req, res) {
-    const type_user = req.session.type_user;
+    var type_user = req.session.type_user;
     if (typeof(type_user) == 'undefined') {
         type_user = null
     }
@@ -231,7 +291,7 @@ router.get("/section/:p1", async function(req, res) {
 });
 
 router.get("/questionnaire/:p1", async function(req, res) {
-    const type_user = req.session.type_user;
+    var type_user = req.session.type_user;
     if (typeof(type_user) == 'undefined') {
         type_user = null
     }
@@ -262,7 +322,7 @@ router.get("/questionnaire/:p1", async function(req, res) {
 });
 
 router.post("/questionnaire/:p1", urlencodedParser, async function(req, res) {
-    const type_user = req.session.type_user;
+    var type_user = req.session.type_user;
     if (typeof(type_user) == 'undefined') {
         type_user = null
     }
@@ -347,7 +407,7 @@ router.post("/admin/add_user", urlencodedParser, async function(req, res) {
 })
 
 router.get("/module/:p1", async function(req, res) {
-    const type_user = req.session.type_user;
+    var type_user = req.session.type_user;
     if (typeof(type_user) == 'undefined') {
         type_user = null
     }
@@ -378,6 +438,10 @@ router.post("/module/:p1", urlencodedParser, async function(req, res) {
     } else {
         res.redirect("../module/" + param)
     }
+});
+
+router.get("/source", function(req, res) {
+    res.render("home/source");
 });
 
 module.exports = router;
