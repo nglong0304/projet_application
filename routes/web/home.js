@@ -2,16 +2,21 @@
 var express = require("express");
 var bodyParser = require('body-parser')
 const session = require('express-session');
-var md5 = require('md5');
 const app = express();
 var router = express.Router();
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 const pool = require('../database/database.js');
 
-app.use(session({
-  module: null,
-  key: ""
+router.use(session({
+    name: 'sid',
+    resave: false,
+    saveUnitialized: false,
+    secret: 'projet_application',
+    cookie: {
+        maxAge: 10 * 60 * 1000,
+        sameSite: true,
+    }
 }));
 
 router.get("/", async function(req, res) {
@@ -161,6 +166,14 @@ router.get("/questionnaire/:p1", async function(req, res) {
     var data_question = await pool.query('SELECT * FROM QUESTIONS')
     var data_quest_mod = await pool.query('SELECT * FROM QUESTION_MODULE')
     var param = req.params.p1
+    const { userId } = req.session
+
+    if (typeof(userId) == 'undefined')
+        res.redirect("../");
+    else if (userId.param != param)
+        res.redirect("../");
+    else if (!(data_module[param].CLE == userId.key_user))
+        res.redirect("../");
 
     res.render("home/question", {
         data_section: data_section,
@@ -180,9 +193,18 @@ router.post("/questionnaire/:p1", urlencodedParser, async function(req, res) {
     var data_reponse = await pool.query('SELECT * FROM REPONSES')
     var param = req.params.p1
     var reponses = req.body
+    const { userId } = req.session
 
     if (param < 0 || param >= data_module.length)
         res.redirect("home");
+
+    if (typeof(userId) == 'undefined')
+        res.redirect("../");
+    else if (userId.param != param)
+        res.redirect("../");
+    else if (!(data_module[param].CLE == userId.key_user))
+        res.redirect("../");
+
     var input_name = "";
     var count = 0;
     for (var i = 0; i < data_quest_mod.length; i++) {
@@ -192,7 +214,7 @@ router.post("/questionnaire/:p1", urlencodedParser, async function(req, res) {
             count++;
         }
     }
-
+    req.session.destroy();
     res.render("home/valid_reponse", {
         data_section: data_section,
         data_module: data_module,
@@ -207,7 +229,6 @@ router.get("/module/:p1", async function(req, res) {
     var data_module = await pool.query('SELECT * FROM MODULE')
     var param = req.params.p1
 
-
     res.render("home/ask_key", {
         data_module: data_module,
         param: param
@@ -220,14 +241,14 @@ router.post("/module/:p1", urlencodedParser, async function(req, res) {
     var reponses = req.body
     var key_user = await pool.query("SELECT MD5(?) as md5", reponses.key)
     key_user = key_user[0].md5
+    const { userId } = req.session
 
     if (param < 0 || param >= data_module.length)
         res.redirect("home");
-    console.log(reponses.key)
-    console.log(key_user)
-    console.log(data_module[param].CLE)
     if (data_module[param].CLE == key_user)
     {
+        var clef = {param, key_user};
+        req.session.userId = clef;
         res.redirect("../questionnaire/"+param)
     }
     else
