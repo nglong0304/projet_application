@@ -146,7 +146,7 @@ router.get("/prof", async function(req, res) {
 
     if (typeof(userId) == 'undefined')
         res.redirect("../");
-    if (typeof(userId.username) == 'undefined')
+    else if (typeof(userId.username) == 'undefined')
         res.redirect("../");
     var data_sql = await pool.query("SELECT * FROM USERS")
     var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
@@ -160,8 +160,7 @@ router.get("/prof", async function(req, res) {
     res.render("home/prof", {
         userId: userId,
         data_section: data_section,
-        data_module: data_module,
-        type_user: 'prof'
+        data_module: data_module
     })
 })
 
@@ -171,7 +170,7 @@ router.get("/prof/module/:p1", async function(req, res) {
 
     if (typeof(userId) == 'undefined')
         res.redirect("../");
-    if (typeof(userId.username) == 'undefined')
+    else if (typeof(userId.username) == 'undefined')
         res.redirect("../");
     var data_sql = await pool.query("SELECT * FROM USERS")
     var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
@@ -186,7 +185,7 @@ router.get("/prof/module/:p1", async function(req, res) {
     res.render("home/prof_show_module", {
         userId: userId,
         data_module: data_module,
-        type_user: 'prof'
+        param: param
     });
 });
 
