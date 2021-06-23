@@ -47,6 +47,13 @@ router.get("/login", function(req, res) {
     res.render("home/login");
 });
 
+router.get("/logout", async function(req, res) {
+    const { userId } = req.session
+
+    req.session.destroy();
+    res.redirect("../");
+});
+
 router.get("/logout", function(req, res) {
     res.render("../");
 });
@@ -169,11 +176,6 @@ router.post("/admin/comments", urlencodedParser, async function(req, res) {
     res.render("home/delegue", {
         data: data_ret
     })
-})
-
-router.get("/logout", async function(req, res) {
-    req.session.destroy();
-    res.render("home/index");
 })
 
 router.get("/section/:p1", async function(req, res) {
