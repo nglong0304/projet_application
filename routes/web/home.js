@@ -255,8 +255,43 @@ router.post("/questionnaire/:p1", urlencodedParser, async function(req, res) {
 });
 
 router.get("/admin/add_user", async function(req, res) {
-    res.render("home/add_user")
+
+    res.render("home/add_user", {
+        warn_username: false,
+        warn_password: false
+    })
 })
+
+router.post("/admin/add_user", urlencodedParser, async function(req, res) {
+    var data = req.body
+    var data_users = await pool.query('SELECT * FROM USERS')
+    var warn_username = false
+    var warn_password = false
+
+    var password_md5 = await pool.query("SELECT MD5(?) as md5", data.password)
+    password_md5 = password_md5[0].md5
+
+
+    for (var i = 0; i < data_users.length; i++)
+        if (data.username == data_users[i].USER_NAME)
+            warn_username = true
+
+    if (data.password != data.confirm_password)
+        warn_password = true
+
+    if (!warn_username && !warn_password) {
+        pool.query('INSERT INTO USERS VALUE(' + (data_users.length) + ',"' + data.username + '","' + password_md5 + '",' + data.type + ')');
+    }
+
+
+    res.render("home/add_user", {
+        warn_username: warn_username,
+        warn_password: warn_password
+    })
+
+
+})
+
 router.get("/module/:p1", async function(req, res) {
     var data_module = await pool.query('SELECT * FROM MODULE')
     var param = req.params.p1
@@ -277,15 +312,12 @@ router.post("/module/:p1", urlencodedParser, async function(req, res) {
 
     if (param < 0 || param >= data_module.length)
         res.redirect("home");
-    if (data_module[param].CLE == key_user)
-    {
-        var clef = {param, key_user};
+    if (data_module[param].CLE == key_user) {
+        var clef = { param, key_user };
         req.session.userId = clef;
-        res.redirect("../questionnaire/"+param)
-    }
-    else
-    {
-        res.redirect("../module/"+param)
+        res.redirect("../questionnaire/" + param)
+    } else {
+        res.redirect("../module/" + param)
     }
 });
 
