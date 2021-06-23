@@ -218,12 +218,15 @@ router.post("/module/:p1", urlencodedParser, async function(req, res) {
     var data_module = await pool.query('SELECT * FROM MODULE')
     var param = req.params.p1
     var reponses = req.body
-
-
+    var key_user = await pool.query("SELECT MD5(?) as md5", reponses.key)
+    key_user = key_user[0].md5
 
     if (param < 0 || param >= data_module.length)
         res.redirect("home");
-    if (data_module[param].CLE == md5(reponses.key))
+    console.log(reponses.key)
+    console.log(key_user)
+    console.log(data_module[param].CLE)
+    if (data_module[param].CLE == key_user)
     {
         res.redirect("../questionnaire/"+param)
     }

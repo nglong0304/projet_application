@@ -71,7 +71,7 @@ INSERT INTO USERS VALUE(4, 'prof3', '1eff3c8299b8fa754815d590badcf98f', 2);
 -- pass: admin, delegues, prof1, prof2, prof3
 
 INSERT INTO MODULE VALUE(0, 2, 'Réseaux', 'Configuration de réseaux internet', 0,'3680e659eee9880c217e9a7408410f16', 3);
-INSERT INTO MODULE VALUE(1, 3, 'Prog. System', 'Programmation d un OS', 0, '3680e659eee9880c217e9a7408410f16', 4);
+INSERT INTO MODULE VALUE(1, 3, 'Prog. System', 'Programmation d un OS', 0, 'cf02fc422ecd5fe6b77c9b42f0f07b73', 4);
 INSERT INTO MODULE VALUE(2, 4, 'Future ?', 'Tu peux y arrivé ?', 5, '4ad6af9685f5e541f6e4cbecea729c04', 5);
 INSERT INTO MODULE VALUE(3, 2, 'Programmation C', 'Apprendre a programmer en C', 0,'909a02c2929ada46f1b21c67e37b2ecd', 3);
 INSERT INTO MODULE VALUE(4, 3, 'Base de données', 'Apprendre a se servir des bases de données', 0,'f50e5169c113f967c47dc750d83b1fa9', 3);
