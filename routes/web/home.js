@@ -54,9 +54,6 @@ router.get("/logout", async function(req, res) {
     res.redirect("../");
 });
 
-router.get("/logout", function(req, res) {
-    res.render("../");
-});
 
 router.post("/login", urlencodedParser, async function(req, res) {
     var data = req.body
