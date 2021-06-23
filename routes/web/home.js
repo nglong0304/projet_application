@@ -65,7 +65,12 @@ router.post("/login", urlencodedParser, async function(req, res) {
             }
 
             if (data_sql[i].TYPE == 2) {
-                res.redirect("/prof/?user=" + username + "&id=" + id)
+                const { userId } = req.session;
+                username = data.username;
+                var passwd = data_sql[i].USER_PASSWORD;
+                var user = { username, passwd };
+                req.session.userId = user;
+                res.redirect("/prof")
                 flag = true
                 break
             }
@@ -79,7 +84,10 @@ router.post("/login", urlencodedParser, async function(req, res) {
 })
 
 router.get("/prof", async function(req, res) {
-    var id = req.query.id;
+    const { userId } = req.session;
+
+    if (typeof(userId) == 'undefined')
+        res.redirect("../");
     res.render("home/prof")
 })
 
@@ -191,6 +199,7 @@ router.post("/questionnaire/:p1", urlencodedParser, async function(req, res) {
     var data_question = await pool.query('SELECT * FROM QUESTIONS')
     var data_quest_mod = await pool.query('SELECT * FROM QUESTION_MODULE')
     var data_reponse = await pool.query('SELECT * FROM REPONSES')
+    var data_max_reponse = await pool.query('SELECT MAX(ID_RESP) AS max FROM REPONSES')
     var param = req.params.p1
     var reponses = req.body
     const { userId } = req.session
@@ -206,11 +215,11 @@ router.post("/questionnaire/:p1", urlencodedParser, async function(req, res) {
         res.redirect("../");
 
     var input_name = "";
-    var count = 0;
+    var count = 1;
     for (var i = 0; i < data_quest_mod.length; i++) {
         if (data_quest_mod[i].ID_MODULES == param) {
             input_name = "reponse_" + i.toString();
-            pool.query('INSERT INTO REPONSES VALUE(' + (data_reponse.length + count) + ',' + data_quest_mod[i].ID_QUESTION + ',"' + reponses[input_name] + '",' + data_quest_mod[i].ID_MODULES + ', 1, 0)');
+            pool.query('INSERT INTO REPONSES VALUE(' + (data_max_reponse[0].max + count) + ',' + data_quest_mod[i].ID_QUESTION + ',"' + reponses[input_name] + '",' + data_quest_mod[i].ID_MODULES + ', 1, 0)');
             count++;
         }
     }
