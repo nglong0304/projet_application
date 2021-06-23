@@ -1,10 +1,18 @@
 // All the routes in page home will be here
 var express = require("express");
 var bodyParser = require('body-parser')
+const session = require('express-session');
+var md5 = require('md5');
+const app = express();
 var router = express.Router();
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 const pool = require('../database/database.js');
+
+app.use(session({
+  module: null,
+  key: ""
+}));
 
 router.get("/", async function(req, res) {
     var data = await pool.query('SELECT * FROM SECTION')
@@ -198,6 +206,7 @@ router.get("/module/:p1", async function(req, res) {
     var data_module = await pool.query('SELECT * FROM MODULE')
     var param = req.params.p1
 
+
     res.render("home/ask_key", {
         data_module: data_module,
         param: param
@@ -209,9 +218,11 @@ router.post("/module/:p1", urlencodedParser, async function(req, res) {
     var param = req.params.p1
     var reponses = req.body
 
+
+
     if (param < 0 || param >= data_module.length)
         res.redirect("home");
-    if (data_module[param].CLE == reponses.key)
+    if (data_module[param].CLE == md5(reponses.key))
     {
         res.redirect("../questionnaire/"+param)
     }
