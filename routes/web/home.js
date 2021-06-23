@@ -20,29 +20,23 @@ router.use(session({
 }));
 
 router.get("/", async function(req, res) {
-    var type_user = req.session.type_user
-    var data = await pool.query('SELECT * FROM SECTION');
     const { userId } = req.session;
-
-    if (typeof(type_user) == 'undefined') {
-        type_user = null
-    }
-
-    if (type_user == "delegue") {
-        res.redirect("/delegue")
-    } else {
-        var data = await pool.query('SELECT * FROM SECTION')
-
-        res.render("home/index", {
-            data: data,
-            type_user: type_user
-        });
-    }
+    var type_user = req.session.type_user
 
     if (!(typeof(userId) == 'undefined'))
+    {
         if (!(typeof(userId.type) == 'undefined') && userId.type == 2)
             res.redirect("/prof");
+        if (!(typeof(userId.type) == 'undefined') && userId.type == 1)
+            res.redirect("/delegue");
+    }
+    
+    var data = await pool.query('SELECT * FROM SECTION')
 
+    res.render("home/index", {
+        data: data,
+        type_user: type_user
+    });
 
 });
 
@@ -96,7 +90,13 @@ router.post("/login", urlencodedParser, async function(req, res) {
             }
 
             if (data_sql[i].TYPE == 1) {
-                req.session.type_user = "delegue"
+                const { userId } = req.session;
+                username = data.username;
+                var passwd = data_sql[i].USER_PASSWORD;
+                var id_user = data_sql[i].ID_USER;
+                var type = 1;
+                var user = { username, passwd, id_user, type };
+                req.session.userId = user;
                 res.redirect("/delegue/?user=" + username + "&id=" + id)
                 flag = true
 
@@ -193,15 +193,15 @@ router.get("/prof/module/:p1", async function(req, res) {
 
 
 router.get("/delegue", async function(req, res) {
-
-    const type_user = req.session.type_user;
-    if (type_user == 'delegue') {
-        var id = req.query.id;
+    const { userId } = req.session;
+    
+    if (userId.type == 1) {
+        var id = userId.id_user;
         var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
 
         res.render("home/delegue", {
             data: data,
-            type_user: type_user
+            userId: userId
         })
     } else {
         res.redirect("/delegue");
@@ -211,7 +211,7 @@ router.get("/delegue", async function(req, res) {
 })
 
 router.post("/delegue", urlencodedParser, async function(req, res) {
-    const type_user = req.session.type_user;
+    const { userId } = req.session;
 
     var data = req.body
     var sql_query_update = "UPDATE REPONSES SET VALIDE=1 WHERE ID_RESP=?"
@@ -226,7 +226,7 @@ router.post("/delegue", urlencodedParser, async function(req, res) {
 
     res.render("home/delegue", {
         data: data_ret,
-        type_user: type_user
+        userId: userId
     })
 })
 
