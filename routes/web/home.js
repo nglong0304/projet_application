@@ -137,4 +137,34 @@ router.get("/module/:p1", async function(req, res) {
     });
 });
 
+router.post("/module/:p1", urlencodedParser, async function(req, res) {
+    var data_section = await pool.query('SELECT * FROM SECTION')
+    var data_module = await pool.query('SELECT * FROM MODULE')
+    var data_question = await pool.query('SELECT * FROM QUESTIONS')
+    var data_quest_mod = await pool.query('SELECT * FROM QUESTION_MODULE')
+    var data_reponse = await pool.query('SELECT * FROM REPONSES')
+    var param = req.params.p1
+    var reponses = req.body
+
+    if (param < 0 || param >= data_module.length)
+        res.redirect("home");
+    var input_name = "";
+    var count=0;
+    for (var i=0; i < data_quest_mod.length; i++)
+    {
+        if (data_quest_mod[i].ID_MODULES == param)
+        {
+            input_name = "reponse_" + i.toString();
+            pool.query('INSERT INTO REPONSES VALUE('+(data_reponse.length+count)+','+data_quest_mod[i].ID_QUESTION+',"'+reponses[input_name]+'",'+data_quest_mod[i].ID_MODULES+', 1, 0)');
+            count++;
+        }
+    }
+
+    res.render("home/valid_reponse", {
+        data_section: data_section,
+        data_module: data_module,
+        param: param
+    });
+});
+
 module.exports = router;

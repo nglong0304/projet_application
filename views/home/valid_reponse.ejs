@@ -1,0 +1,12 @@
+<%- include('../_partial/_header'); -%>
+
+	<%
+		if (param >= 0 && param < data_module.length)
+		{
+			%>
+				<h1 style="color:green">your responses from the "<%= data_module[param].NAME_MODULE %>" module have been saved</h1>
+			<%
+		}
+	%>
+
+<%- include ('../_partial/_footer'); -%>
