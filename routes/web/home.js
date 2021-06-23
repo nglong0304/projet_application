@@ -194,7 +194,7 @@ router.get("/prof/module/:p1", async function(req, res) {
 
 router.get("/delegue", async function(req, res) {
     const { userId } = req.session;
-    
+
     if (userId.type == 1) {
         var id = userId.id_user;
         var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
@@ -206,8 +206,6 @@ router.get("/delegue", async function(req, res) {
     } else {
         res.redirect("/delegue");
     }
-
-
 })
 
 router.post("/delegue", urlencodedParser, async function(req, res) {
