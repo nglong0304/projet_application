@@ -6,31 +6,38 @@
             <div class="card-deck">
                 <div class="card">
 
-                    <div class="card-body">
+                    <div class="input-group">
                         <p class="card-title">Module:
                             <%= data[i].NAME_MODULE %>
                         </p>
-                        <h5 class="card-text">Commentaire:
-                            <%= data[i].REPONSE %>
-                        </h5>
+                        <% if (data[i].TYPE==0){%>
+                            <h5 class="card-text">Commentaire:
+                                <%= data[i].REPONSE %>
+                            </h5>
+                            <% }else{ %>
+                                <h5 class="card-text">Question:
+                                    <%= data[i].QUESTION %>
+                                </h5>
+                                <h5 class="card-text">Response:
+                                    <%= data[i].REPONSE %>
+                                </h5>
+                                <% } %>
+                                    <form method="POST" action="/delegue">
+                                        <div class="input-group input-group-sm">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="ret_value" id="inlineRadio1" value="Accept"><h6>Accept</h6> 
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="ret_value" id="inlineRadio2" value="Refuse"> <h6>Refuse</h6>
+                                            </label>
 
-                        <form method="POST" action="/delegue">
+                                            <input type="hidden" name="id_resp" value=<%=data[i].ID_RESP%> >
+                                            <div>
+                                                <input type="submit" class="btn btn-primary" value="Apply" />
+                                            </div>
+                                        </div>
 
-                            <p>
-                                <label class="radio-inline">
-                                <input type="radio" name="ret_value" id="inlineRadio1" value="Accept"> Accept
-                            </label>
-                                <label class="radio-inline">
-                                <input type="radio" name="ret_value" id="inlineRadio2" value="Refuse"> Refuse
-                            </label>
-
-                                <input type="hidden" name="id_resp" value=<%=data[i].ID_RESP%> >
-                                <div>
-                                    <input type="submit" class="btn btn-primary" value="Apply" />
-                                </div>
-                            </p>
-
-                        </form>
+                                    </form>
                     </div>
 
 

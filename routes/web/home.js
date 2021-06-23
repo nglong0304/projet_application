@@ -77,7 +77,7 @@ router.get("/admin", async function(req, res) {
 
 router.get("/delegue", async function(req, res) {
     var id = req.query.id;
-    var data = await pool.query("SELECT * FROM REPONSES JOIN MODULE USING(ID_MODULES) WHERE VALIDE=0")
+    var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
 
     res.render("home/delegue", {
         data: data
@@ -94,7 +94,34 @@ router.post("/delegue", urlencodedParser, async function(req, res) {
         var ret = await pool.query(sql_query_del, data.id_resp)
     }
 
-    var data_ret = await pool.query("SELECT * FROM REPONSES JOIN MODULE USING(ID_MODULES) WHERE VALIDE=0")
+    var data_ret = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
+
+    res.render("home/delegue", {
+        data: data_ret
+    })
+})
+
+
+router.get("/admin/comments", async function(req, res) {
+    var id = req.query.id;
+    var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
+
+    res.render("home/delegue", {
+        data: data
+    })
+})
+
+router.post("/admin/comments", urlencodedParser, async function(req, res) {
+    var data = req.body
+    var sql_query_update = "UPDATE REPONSES SET VALIDE=1 WHERE ID_RESP=?"
+    var sql_query_del = "DELETE FROM REPONSES WHERE ID_RESP=?"
+    if (data.ret_value == "Accept") {
+        var ret = await pool.query(sql_query_update, data.id_resp)
+    } else if (data.ret_value == "Refuse") {
+        var ret = await pool.query(sql_query_del, data.id_resp)
+    }
+
+    var data_ret = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
 
     res.render("home/delegue", {
         data: data_ret
