@@ -19,6 +19,7 @@ router.use(session({
     }
 }));
 
+//GET and POST for PAGE ACCUEIL
 router.get("/", async function(req, res) {
     const { userId } = req.session;
     var type_user = req.session.type_user
@@ -56,17 +57,23 @@ router.get("/about", function(req, res) {
     });
 });
 
+
+router.get("/logout", async function(req, res) {
+    req.session.destroy();
+    res.redirect("/")
+})
+
+// router.get("/logout", async function(req, res) {
+//     const { userId } = req.session
+
+//     req.session.destroy();
+//     res.redirect("../");
+// });
+
 router.get("/login", function(req, res) {
     res.render("home/login", {
         type_user: null
     });
-});
-
-router.get("/logout", async function(req, res) {
-    const { userId } = req.session
-
-    req.session.destroy();
-    res.redirect("../");
 });
 
 router.post("/login", urlencodedParser, async function(req, res) {
@@ -127,19 +134,7 @@ router.post("/login", urlencodedParser, async function(req, res) {
 
 })
 
-
-router.get("/admin", async function(req, res) {
-    const type_user = req.session.type_user;
-    if (type_user == 'admin') {
-        var data = await pool.query('SELECT * FROM SECTION')
-        res.render("home/index", {
-            data: data,
-            type_user: 'admin'
-        });
-    } else {
-        res.redirect("../");
-    }
-});
+//GET and POST for PROF
 
 router.get("/prof", async function(req, res) {
     const { userId } = req.session;
@@ -189,6 +184,7 @@ router.get("/prof/module/:p1", async function(req, res) {
     });
 });
 
+//GET and POST for DELEGUE
 router.get("/delegue", async function(req, res) {
     const { userId } = req.session;
 
@@ -225,42 +221,6 @@ router.post("/delegue", urlencodedParser, async function(req, res) {
     })
 })
 
-
-router.get("/admin/comments", async function(req, res) {
-    const type_user = req.session.type_user;
-    var id = req.query.id;
-    var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
-
-    res.render("home/delegue", {
-        data: data,
-        type_user: 'admin'
-    })
-})
-
-router.post("/admin/comments", urlencodedParser, async function(req, res) {
-    const type_user = req.session.type_user;
-
-    var data = req.body
-    var sql_query_update = "UPDATE REPONSES SET VALIDE=1 WHERE ID_RESP=?"
-    var sql_query_del = "DELETE FROM REPONSES WHERE ID_RESP=?"
-    if (data.ret_value == "Accept") {
-        var ret = await pool.query(sql_query_update, data.id_resp)
-    } else if (data.ret_value == "Refuse") {
-        var ret = await pool.query(sql_query_del, data.id_resp)
-    }
-
-    var data_ret = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
-
-    res.render("home/delegue", {
-        data: data_ret,
-        type_user: "admin"
-    })
-})
-
-router.get("/logout", async function(req, res) {
-    req.session.destroy();
-    res.redirect("/")
-})
 
 router.get("/section/:p1", async function(req, res) {
     var type_user = req.session.type_user;
@@ -355,13 +315,85 @@ router.post("/questionnaire/:p1", urlencodedParser, async function(req, res) {
     });
 });
 
-router.get("/admin/add_user", async function(req, res) {
+// GET and POST for ADMIN
+router.get("/admin", async function(req, res) {
+    const type_user = req.session.type_user;
+    if (type_user == 'admin') {
+        var data = await pool.query('SELECT * FROM SECTION')
+        res.render("home/index", {
+            data: data,
+            type_user: 'admin'
+        });
+    } else {
+        res.redirect("../");
+    }
+});
 
-    res.render("home/add_user", {
-        warn_username: false,
-        warn_password: false,
+router.get("/admin/list_prof", async function(req, res){
+    const type_user = req.session.type_user;
+    if (type_user == "admin"){
+        var data_prof = await pool.query('SELECT * FROM USERS WHERE TYPE = 2');
+        for (var i=0; i< data_prof.length ; i++){
+            console.log(data_prof[i]);
+        }    
+        res.render("home/list_prof", {
+            data : data_prof,
+            type_user : type_user
+        })
+    }
+    else {
+        res.render("home/login", {
+            type_user : type_user
+        })
+    }
+    
+})
+
+router.get("/admin/comments", async function(req, res) {
+    const type_user = req.session.type_user;
+    var id = req.query.id;
+    var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
+
+    res.render("home/delegue", {
+        data: data,
+        type_user: 'admin'
+    })
+})
+
+router.post("/admin/comments", urlencodedParser, async function(req, res) {
+    const type_user = req.session.type_user;
+
+    var data = req.body
+    var sql_query_update = "UPDATE REPONSES SET VALIDE=1 WHERE ID_RESP=?"
+    var sql_query_del = "DELETE FROM REPONSES WHERE ID_RESP=?"
+    if (data.ret_value == "Accept") {
+        var ret = await pool.query(sql_query_update, data.id_resp)
+    } else if (data.ret_value == "Refuse") {
+        var ret = await pool.query(sql_query_del, data.id_resp)
+    }
+
+    var data_ret = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
+
+    res.render("home/delegue", {
+        data: data_ret,
         type_user: "admin"
     })
+})
+
+router.get("/admin/add_user", async function(req, res) {
+    const type_user = req.session.type_user;
+
+    if (type_user == "admin"){
+        res.render("home/add_user", {
+            warn_username: false,
+            warn_password: false,
+            type_user: type_user
+        })
+    } else{
+        res.render("home/login", {
+            type_user : type_user
+        })
+    }  
 })
 
 router.post("/admin/add_user", urlencodedParser, async function(req, res) {
