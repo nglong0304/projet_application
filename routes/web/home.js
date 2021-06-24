@@ -70,9 +70,10 @@ router.get("/logout", async function(req, res) {
 });
 
 router.post("/login", urlencodedParser, async function(req, res) {
+    const { userId } = req.session
     var data = req.body
     var data_sql = await pool.query("SELECT * FROM USERS")
-    var input_password = await pool.query("SELECT MD5(?) as md5", data.password)
+    var input_password = await pool.query("SELECT MD5(?) as md5 ", data.password)
     data.password = input_password[0].md5
 
     var flag = false
@@ -83,7 +84,6 @@ router.post("/login", urlencodedParser, async function(req, res) {
             var id = encodeURIComponent(data_sql[i].ID_USER);
             var username = encodeURIComponent(data_sql[i].USER_NAME);
             if (data_sql[i].TYPE == 0) {
-                req.session.type_user = "admin"
                 res.redirect("/admin/?user=" + username + "&id=" + id)
                 flag = true
                 break
@@ -111,7 +111,6 @@ router.post("/login", urlencodedParser, async function(req, res) {
                 var type = 2;
                 var user = { username, passwd, id_user, type };
                 req.session.userId = user;
-                req.session.type_user = "prof"
                 res.redirect("/prof")
                 flag = true
                 break
@@ -149,7 +148,7 @@ router.get("/prof", async function(req, res) {
     else if (typeof(userId.username) == 'undefined')
         res.redirect("../");
     var data_sql = await pool.query("SELECT * FROM USERS")
-    var input_password = await pool.query("SELECT MD5(?) as md5", userId.password)
+    var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
     for (var i = 0; i < data_sql.length; i++)
         if (userId.username == data_sql[i].USER_NAME)
             if (userId.passwd != data_sql[i].USER_PASSWORD)
