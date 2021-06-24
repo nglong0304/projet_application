@@ -9,7 +9,7 @@ const pool = mariadb.createPool({
 });
 
 
-
+//dqeazeea
 // Connect and check for errors
 pool.getConnection((err, connection) => {
     if (err) {

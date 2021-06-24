@@ -26,53 +26,53 @@
 
             <nav>
                 <ul class="nav navbar-nav navbar-right">
-                    <% if(currentUser != null) { %>
-                        <% if(currentId == 0) { %>
-                            <li>
-                                <div class="dropdown">
-                                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= currentUser%> !
-                                    <span class="caret"></span></button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="/admin/add_user">Add new User</a></li>
-                                        <li><a href="/admin/comments">Check comments</a></li>
-                                        <li><a href="/logout">Logout</a></li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <% } %>
 
-                                <% if(currentId == 1) { %>
-                                    <li>
-                                        <div class="dropdown">
-                                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= currentUser%> !
+                    <% if(type_user == "admin") { %>
+                        <li>
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= type_user%> !
                                     <span class="caret"></span></button>
-                                            <ul class="dropdown-menu">
-                                                <li><a href="/logout">Logout</a></li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                    <% } %>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/admin/add_user">Add new User</a></li>
+                                    <li><a href="/admin/comments">Check comments</a></li>
+                                    <li><a href="/logout">Logout</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <% } %>
 
-                                        <% if(currentId == 2) { %>
-                                            <li>
-                                                <div class="dropdown">
-                                                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= currentUser%> !
-                                    <span class="caret"></span></button>
-                                                    <ul class="dropdown-menu">
-                                                        <li><a href="#">Profil</a></li>
-                                                        <li><a href="#">Add module</a></li>
-                                                        <li><a href="/logout">Logout</a></li>
-                                                    </ul>
-                                                </div>
-                                            </li>
-                                            <% } %>
+                            <% if(type_user == "delegue") { %>
+                                <li>
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= type_user%> !
+                                <span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="/logout">Logout</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <% } %>
 
-                                                <%}%>
-                                                    <% if(currentUser == null) { %>
-                                                        <li>
-                                                            <div class="usermenu"><span class="login">You are currently using guest access (<a href="/login">Log in</a>)</span></div>
-                                                        </li>
-                                                        <% } %>
+                                    <% if(type_user == "prof") { %>
+                                        <li>
+                                            <div class="dropdown">
+                                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= type_user%> !
+                                <span class="caret"></span></button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a href="#">Profil</a></li>
+                                                    <li><a href="#">Add module</a></li>
+                                                    <li><a href="/logout">Logout</a></li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                        <% } %>
+
+
+                                            <% if(type_user == null) { %>
+                                                <li>
+                                                    <div class="usermenu"><span class="login">You are currently using guest access (<a href="/login">Log in</a>)</span></div>
+                                                </li>
+                                                <% } %>
                 </ul>
             </nav>
 
