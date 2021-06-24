@@ -642,4 +642,42 @@ router.get("/source", function(req, res) {
     res.render("home/source");
 });
 
+
+router.get("/prof/add_module", async function(req, res) {
+
+    res.render("home/add_module",{
+        warn_module: false
+    })
+})
+
+router.post("/prof/add_module", urlencodedParser, async function(req, res) {
+    const { userId } = req.session;
+    var data = req.body
+    var data_modules = await pool.query('SELECT * FROM MODULE')
+    var data_max_module = await pool.query('SELECT MAX(ID_MODULES) AS max FROM MODULE')
+    data_max_module=data_max_module[0].max
+    var warn_module = false
+
+
+    var password_md5 = await pool.query("SELECT MD5(?) as md5", data.password)
+    password_md5 = password_md5[0].md5
+
+
+    for (var i = 0; i < data_modules.length; i++)
+        if (data.username == data_modules[i].NAME_MODULE)
+            warn_module = true
+
+
+    if (!warn_module ) {
+        pool.query('INSERT INTO MODULE VALUE(' + (data_max_module+ 1) + ',"' + parseInt(userId.id_user)  + '" ,"' + data.username + '","' + data.description + '","' + data.type + '","' + password_md5 + '",0)');
+    }
+
+
+    res.render("home/add_module", {
+        warn_module: warn_module
+    })
+
+
+})
+
 module.exports = router;
