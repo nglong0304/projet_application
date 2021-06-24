@@ -163,7 +163,8 @@ router.get("/prof", async function(req, res) {
         res.render("home/prof", {
             userId: userId,
             data_section: data_section,
-            data_module: data_module
+            data_module: data_module,
+            type_user: userId.type
         })
     }
 
@@ -200,8 +201,49 @@ router.get("/prof/module/:p1", async function(req, res) {
             param: param,
             data_question: data_question,
             data_quest_mod: data_quest_mod,
-            data_reponse: data_reponse
+            data_reponse: data_reponse,
+            type_user: userId.type
         });
+    }
+});
+
+
+router.get("/prof/module/:p1/:p2", async function(req, res) {
+    var id_module = req.params.p1;
+    var id_question = req.params.p2;
+    const { userId } = req.session;
+
+    if (typeof(userId) == 'undefined')
+        res.redirect("../../");
+    else if (typeof(userId.username) == 'undefined')
+        res.redirect("../../");
+    else {
+        var data_sql = await pool.query("SELECT * FROM USERS")
+        var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
+        for (var i = 0; i < data_sql.length; i++)
+            if (userId.username == data_sql[i].USER_NAME)
+                if (userId.passwd != data_sql[i].USER_PASSWORD)
+                    res.redirect("/logout");
+                else {
+                    var data_module = await pool.query('SELECT * FROM MODULE');
+
+                    if (id_module < 0 || id_module >= data_module.length || userId.id_user != data_module[id_module].ID_USER)
+                        res.redirect("/prof");
+
+                    var data_reponse = await pool.query('SELECT * FROM REPONSES WHERE ID_MODULES=' + id_module + ' AND ID_QUESTION=' + id_module)
+                    var data_question = await pool.query('SELECT * FROM QUESTIONS')
+
+                    res.render("home/prof_show_reponses", {
+                        userId: userId,
+                        data_reponse: data_reponse,
+                        data_question: data_question,
+                        id_question: id_question,
+                        id_module: id_module,
+                        type_user: userId.id_user
+                    });
+                }
+
+
     }
 });
 
@@ -268,7 +310,8 @@ router.get("/prof/profil", async function(req, res) {
                     res.redirect("/logout");
 
         res.render("home/prof_profile", {
-            userId: userId
+            userId: userId,
+            type_user: userId.type
         });
     }
 });
@@ -655,6 +698,59 @@ router.post("/prof/add_module", urlencodedParser, async function(req, res) {
     })
 
 
+})
+
+router.get("/change_password", async function(req, res) {
+    const { userId } = req.session;
+    if (typeof(userId) != 'undefined') {
+        if (typeof(userId.type) == 'undefined') {
+            res.redirect("../");
+        } else {
+            var type_user = userId.type
+
+            res.render("home/change_password", {
+                warn_old_password: false,
+                warn_confirm_password: false,
+                type_user: type_user
+            })
+
+        }
+    } else {
+        res.redirect("/")
+    }
+})
+
+router.post("/change_password", urlencodedParser, async function(req, res) {
+    const { userId } = req.session;
+    var data = req.body
+    var warn_old_password = false
+    var warn_confirm_password = false
+    console.log(data.old_password)
+    var old_password_md5 = await pool.query("select MD5(?) AS md5", data.old_password)
+    old_password_md5 = old_password_md5[0].md5
+
+    console.log(userId.id_user)
+    var database_old_pass = await pool.query("SELECT USER_PASSWORD FROM USERS WHERE ID_USER=" + parseInt(userId.id_user))
+    database_old_pass = database_old_pass[0].USER_PASSWORD
+    if (old_password_md5 != database_old_pass)
+        warn_old_password = true
+
+    if (data.new_password != data.confirm_password)
+        warn_confirm_password = true
+
+    if (!warn_old_password && !warn_confirm_password) {
+        var password_md5 = await pool.query("select MD5(?) AS md5", data.new_password)
+        password_md5 = password_md5[0].md5
+        await pool.query("UPDATE USERS SET USER_PASSWORD=? WHERE ID_USER=?", [password_md5, userId.id_user])
+        res.redirect("/")
+    } else {
+        res.render("home/change_password", {
+            warn_old_password: warn_old_password,
+            warn_confirm_password: warn_confirm_password,
+            type_user: userId.type
+        })
+
+    }
 })
 
 module.exports = router;
