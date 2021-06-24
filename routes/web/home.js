@@ -473,6 +473,9 @@ router.get("/admin/comments", async function(req, res) {
 
 router.get("/admin/list_delegate", async function(req, res){
     const { userId } = req.session;
+    if (typeof(userId) == 'undefined')
+        return res.redirect("../");
+
     const type_user = userId.type;
     if (type_user == 0){
         var data_delegues = await pool.query('SELECT * FROM USERS WHERE TYPE = 1');
@@ -490,11 +493,29 @@ router.get("/admin/list_delegate", async function(req, res){
     
 });
 
-router.get("/admin/comments", async function(req, res) {
-    const type_user = req.session.type_user;
-    var id = req.query.id;
-    var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
+router.get("/admin/delete/:id", async function(req, res){
+    const { userId } = req.session;
+    if (typeof(userId) == 'undefined')
+        res.redirect("../");
+        
+    const type_user = userId.type;
+    if (type_user == 0){
+        var id = req.params.id;
+        pool.query("DELETE FROM USERS WHERE ID_USER = ? ", id);
+        
+        var new_data = await pool.query('SELECT * FROM USERS WHERE TYPE = 2');
+        
 
+        res.render("home/list_prof", {
+            data : new_data,
+            type_user : type_user
+        })
+    }
+    else {
+        res.render("home/login", {
+            type_user : type_user
+        })
+    }
 });
 
 router.post("/admin/comments", urlencodedParser, async function(req, res) {
