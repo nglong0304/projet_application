@@ -283,32 +283,6 @@ router.post("/prof/profil", urlencodedParser, async function(req, res) {
     }
 });
 
-router.get("/delegue", async function(req, res) {
-    const { userId } = req.session;
-    if (!(typeof(userId) == 'undefined')) {
-        if (!(typeof(userId.type) == 'undefined')) {
-            var type_user = userId.type
-            if (userId.type == 1) {
-                var id = userId.id_user;
-                var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
-
-                res.render("home/delegue", {
-                    data: data,
-                    userId: userId,
-                    type_user: type_user
-                })
-            }
-        } else {
-            var type_user = null
-            res.redirect("/logout");
-        }
-    } else {
-        var type_user = null
-        res.redirect("/logout");
-    }
-
-});
-
 router.post("/delegue", urlencodedParser, async function(req, res) {
     const { userId } = req.session;
     var type_user = userId.type
@@ -501,6 +475,25 @@ router.get("/admin/list_prof", async function(req, res){
 
         res.render("home/list_prof", {
             data : data_prof,
+            type_user : type_user
+        })
+    }
+    else {
+        res.render("home/login", {
+            type_user : type_user
+        })
+    }
+    
+});
+
+router.get("/admin/list_delegate", async function(req, res){
+    const { userId } = req.session;
+    const type_user = userId.type;
+    if (type_user == 0){
+        var data_delegues = await pool.query('SELECT * FROM USERS WHERE TYPE = 1');
+
+        res.render("home/list_delegate", {
+            data : data_delegues,
             type_user : type_user
         })
     }
