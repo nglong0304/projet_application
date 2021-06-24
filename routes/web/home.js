@@ -509,7 +509,31 @@ router.get("/admin/comments", async function(req, res) {
     } else {
         res.redirect("/")
     }
+});
 
+router.get("/admin/list_delegate", async function(req, res){
+    const { userId } = req.session;
+    const type_user = userId.type;
+    if (type_user == 0){
+        var data_delegues = await pool.query('SELECT * FROM USERS WHERE TYPE = 1');
+
+        res.render("home/list_delegate", {
+            data : data_delegues,
+            type_user : type_user
+        })
+    }
+    else {
+        res.render("home/login", {
+            type_user : type_user
+        })
+    }
+    
+});
+
+router.get("/admin/comments", async function(req, res) {
+    const type_user = req.session.type_user;
+    var id = req.query.id;
+    var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
 
 });
 
