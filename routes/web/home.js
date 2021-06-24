@@ -208,35 +208,28 @@ router.get("/prof/module/:p1", async function(req, res) {
 //GET and POST for DELEGUE
 router.get("/delegue", async function(req, res) {
     const { userId } = req.session;
+    if (!(typeof(userId) == 'undefined')) {
+        if (!(typeof(userId.type) == 'undefined')) {
+            var type_user = userId.type
+            if (userId.type == 1) {
+                var id = userId.id_user;
+                var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
 
-    if (typeof(userId) == 'undefined')
-        res.redirect("../../");
-    else if (typeof(userId.username) == 'undefined')
-        res.redirect("../../");
-    else {
-        var data_sql = await pool.query("SELECT * FROM USERS")
-        var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
-        for (var i = 0; i < data_sql.length; i++)
-            if (userId.username == data_sql[i].USER_NAME)
-                if (userId.passwd != data_sql[i].USER_PASSWORD)
-                    res.redirect("/logout");
-
-        var data_module = await pool.query('SELECT * FROM MODULE');
-
-        if (id_module < 0 || id_module >= data_module.length || userId.id_user != data_module[id_module].ID_USER)
-            res.redirect("/prof");
-
-        var data_reponse = await pool.query('SELECT * FROM REPONSES WHERE ID_MODULES=' + id_module + ' AND ID_QUESTION=' + id_module)
-        var data_question = await pool.query('SELECT * FROM QUESTIONS')
-
-        res.render("home/prof_show_reponses", {
-            userId: userId,
-            data_reponse: data_reponse,
-            data_question: data_question,
-            id_question: id_question,
-            id_module: id_module
-        });
+                res.render("home/delegue", {
+                    data: data,
+                    userId: userId,
+                    type_user: type_user
+                })
+            }
+        } else {
+            var type_user = null
+            res.redirect("/logout");
+        }
+    } else {
+        var type_user = null
+        res.redirect("/logout");
     }
+
 });
 
 router.get("/prof/profil", async function(req, res) {
