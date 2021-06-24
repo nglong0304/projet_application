@@ -14,7 +14,7 @@ router.use(session({
     saveUnitialized: false,
     secret: 'projet_application',
     cookie: {
-        maxAge: 10 * 60 * 1000,
+        maxAge: 30 * 60 * 1000,
         sameSite: true,
     }
 }));
@@ -68,7 +68,7 @@ router.get("/about", function(req, res) {
 router.get("/logout", async function(req, res) {
     req.session.destroy();
     res.redirect("/")
-})
+});
 
 
 router.get("/login", function(req, res) {
@@ -139,7 +139,7 @@ router.post("/login", urlencodedParser, async function(req, res) {
         });
     }
 
-})
+});
 
 //GET and POST for PROF
 
@@ -167,7 +167,7 @@ router.get("/prof", async function(req, res) {
         })
     }
 
-})
+});
 
 router.get("/prof/module/:p1", async function(req, res) {
     var param = req.params.p1
@@ -314,7 +314,7 @@ router.get("/delegue", async function(req, res) {
         res.redirect("/logout");
     }
 
-})
+});
 
 router.post("/delegue", urlencodedParser, async function(req, res) {
     const { userId } = req.session;
@@ -335,7 +335,7 @@ router.post("/delegue", urlencodedParser, async function(req, res) {
         userId: userId,
         type_user: type_user
     })
-})
+});
 
 
 router.get("/admin/comments", async function(req, res) {
@@ -348,7 +348,7 @@ router.get("/admin/comments", async function(req, res) {
         data: data,
         type_user: type_user
     })
-})
+});
 
 router.post("/admin/comments", urlencodedParser, async function(req, res) {
     const { userId } = req.session;
@@ -369,7 +369,7 @@ router.post("/admin/comments", urlencodedParser, async function(req, res) {
         data: data_ret,
         type_user: type_user
     })
-})
+});
 
 
 router.get("/section/:p1", async function(req, res) {
@@ -488,6 +488,7 @@ router.post("/questionnaire/:p1", urlencodedParser, async function(req, res) {
 // GET and POST for ADMIN
 router.get("/admin", async function(req, res) {
     const type_user = req.session.type_user;
+    console.log(type_user);
     if (type_user == 'admin') {
         var data = await pool.query('SELECT * FROM SECTION')
         res.render("home/index", {
@@ -500,8 +501,9 @@ router.get("/admin", async function(req, res) {
 });
 
 router.get("/admin/list_prof", async function(req, res){
-    const type_user = req.session.type_user;
-    if (type_user == "admin"){
+    const { userId } = req.session;
+    const type_user = userId.type;
+    if (type_user == 0){
         var data_prof = await pool.query('SELECT * FROM USERS WHERE TYPE = 2');
 
         res.render("home/list_prof", {
@@ -515,7 +517,7 @@ router.get("/admin/list_prof", async function(req, res){
         })
     }
     
-})
+});
 
 router.get("/admin/comments", async function(req, res) {
     const type_user = req.session.type_user;
@@ -526,12 +528,12 @@ router.get("/admin/comments", async function(req, res) {
         data: data,
         type_user: 'admin'
     })
-})
+});
 
 router.post("/admin/comments", urlencodedParser, async function(req, res) {
     const type_user = req.session.type_user;
 
-    var data = req.body
+    var data = req.body;
     var sql_query_update = "UPDATE REPONSES SET VALIDE=1 WHERE ID_RESP=?"
     var sql_query_del = "DELETE FROM REPONSES WHERE ID_RESP=?"
     if (data.ret_value == "Accept") {
@@ -546,6 +548,8 @@ router.post("/admin/comments", urlencodedParser, async function(req, res) {
         data: data_ret,
         type_user: "admin"
     })
+});
+
 router.get("/admin/add_user", async function(req, res) {
     const { userId } = req.session;
     var type_user = userId.type
@@ -559,7 +563,7 @@ router.get("/admin/add_user", async function(req, res) {
             type_user: type_user
         })
     }
-})
+});
 
 router.post("/admin/add_user", urlencodedParser, async function(req, res) {
     const { userId } = req.session;
@@ -593,7 +597,7 @@ router.post("/admin/add_user", urlencodedParser, async function(req, res) {
     })
 
 
-})
+});
 
 router.get("/module/:p1", async function(req, res) {
     const { userId } = req.session;
