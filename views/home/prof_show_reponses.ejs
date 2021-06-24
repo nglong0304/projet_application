@@ -1,0 +1,17 @@
+<%- include('../_partial/_header_prof'); -%>
+
+	<h4><%= data_question[id_question].QUESTION %></h4><br />
+
+	<%
+		for (var i=0; i < data_reponse.length; i++)
+		{
+			if (data_reponse[i].VALIDE == 1)
+			{
+				%>
+					<h5>- <%= data_reponse[i].REPONSE %></h5>
+				<%
+			}
+		}
+	%>
+
+<%- include ('../_partial/_footer'); -%>
