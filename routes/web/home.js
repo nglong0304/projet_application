@@ -179,12 +179,21 @@ router.get("/prof/module/:p1", async function(req, res) {
                 res.redirect("/logout");
 
     var data_module = await pool.query('SELECT * FROM MODULE');
+
     if (param < 0 || param >= data_module.length || userId.id_user != data_module[param].ID_USER)
         res.redirect("/prof");
+
+    var data_question = await pool.query('SELECT * FROM QUESTIONS')
+    var data_quest_mod = await pool.query('SELECT * FROM QUESTION_MODULE WHERE ID_MODULES='+param)
+    var data_reponse = await pool.query('SELECT * FROM REPONSES WHERE ID_MODULES='+param)
+
     res.render("home/prof_show_module", {
         userId: userId,
         data_module: data_module,
-        param: param
+        param: param,
+        data_question: data_question,
+        data_quest_mod: data_quest_mod,
+        data_reponse: data_reponse
     });
 });
 
