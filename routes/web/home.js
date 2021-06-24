@@ -240,6 +240,57 @@ router.get("/prof/module/:p1/:p2", async function(req, res) {
     }
 });
 
+router.get("/prof/profil", async function(req, res) {
+    const { userId } = req.session;
+
+    if (typeof(userId) == 'undefined')
+        res.redirect("../../");
+    else if (typeof(userId.username) == 'undefined')
+        res.redirect("../../");
+    else
+    {
+        var data_sql = await pool.query("SELECT * FROM USERS")
+        var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
+        for (var i = 0; i < data_sql.length; i++)
+            if (userId.username == data_sql[i].USER_NAME)
+                if (userId.passwd != data_sql[i].USER_PASSWORD)
+                    res.redirect("/logout");
+
+        res.render("home/prof_profile", {
+            userId: userId
+        });
+    }
+});
+
+router.post("/prof/profil", urlencodedParser, async function(req, res) {
+    var data = req.body
+    const { userId } = req.session
+
+    if (typeof(userId) == 'undefined')
+        res.redirect("../../");
+    else if (typeof(userId.username) == 'undefined')
+        res.redirect("../../");
+    else
+    {
+        var data_sql = await pool.query("SELECT * FROM USERS")
+        var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
+        for (var i = 0; i < data_sql.length; i++)
+            if (userId.username == data_sql[i].USER_NAME)
+                if (userId.passwd != data_sql[i].USER_PASSWORD)
+                    res.redirect("/logout");
+
+        if (data.password == data.cpassword)
+        {
+            var pass = await pool.query("SELECT MD5(?) as md5", data.password);
+            var sql_query_update = "UPDATE USERS SET USER_PASSWORD='"+pass[0].md5+"' WHERE ID_USER=?";
+            var ret = await pool.query(sql_query_update, userId.id_user);
+            res.redirect("../..");
+        }
+        else
+            res.redirect("");
+    }
+});
+
 router.get("/delegue", async function(req, res) {
     const { userId } = req.session;
 
