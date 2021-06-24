@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Evaluation Teacher</title>
+    <title>EvaluInsa</title>
     <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -15,7 +15,7 @@
     <div class="navbar navbar-default navbar-static-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/">Evaluation Enseignements</a>
+                <a style="color:red;" class="navbar-brand" href="/">Evaluation Enseignements</a>
             </div>
             <nav>
                 <ul class="nav navbar-nav navbar-left">
@@ -27,10 +27,10 @@
             <nav>
                 <ul class="nav navbar-nav navbar-right">
 
-                    <% if(type_user == "admin") { %>
+                    <% if(type_user == 0) { %>
                         <li>
                             <div class="dropdown">
-                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= type_user%> !
+                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome admin !
                                     <span class="caret"></span></button>
                                 <ul class="dropdown-menu">
                                     <li><a href="/admin/add_user">Add new User</a></li>
@@ -41,10 +41,10 @@
                         </li>
                         <% } %>
 
-                            <% if(type_user == "delegue") { %>
+                            <% if(type_user == 1) { %>
                                 <li>
                                     <div class="dropdown">
-                                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= type_user%> !
+                                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome delegue !
                                 <span class="caret"></span></button>
                                         <ul class="dropdown-menu">
                                             <li><a href="/logout">Logout</a></li>
@@ -53,13 +53,12 @@
                                 </li>
                                 <% } %>
 
-                                    <% if(type_user == "prof") { %>
+                                    <% if(type_user == 2) { %>
                                         <li>
                                             <div class="dropdown">
-                                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome <%= type_user%> !
+                                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome prof !
                                 <span class="caret"></span></button>
                                                 <ul class="dropdown-menu">
-                                                    <li><a href="#">Profil</a></li>
                                                     <li><a href="#">Add module</a></li>
                                                     <li><a href="/logout">Logout</a></li>
                                                 </ul>

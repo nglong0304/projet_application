@@ -1,6 +1,7 @@
 <%- include('../_partial/_header'); -%>
 
-    <h1>Welcome to Home page.</h1><br />
+    <h1 style="color:rgb(255, 72, 0);" > <img src="/images/insa.gif" height="50" width="200"/> Welcome to EvaluInsa.</h1><br />
+     
 
     <%
         var y;
@@ -19,7 +20,7 @@
                 %>
                     <div class="col-md-4 text-center">
                         <a href="/section/<%= i+z %>"> <img src="<%= data[i+z].LINK %>" height="250" width="250"/> </a>
-                        <p><%= data[i+z].NAME_SECTION %></p>
+                        <p style = "font-weight: bold " ><a href="/section/<%= i+z %>"> <%= data[i+z].NAME_SECTION %> </a></p>
                     </div>
                 <%
             }
