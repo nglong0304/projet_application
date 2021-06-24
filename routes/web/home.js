@@ -224,26 +224,23 @@ router.get("/prof/module/:p1/:p2", async function(req, res) {
             if (userId.username == data_sql[i].USER_NAME)
                 if (userId.passwd != data_sql[i].USER_PASSWORD)
                     res.redirect("/logout");
-                else {
-                    var data_module = await pool.query('SELECT * FROM MODULE');
 
-                    if (id_module < 0 || id_module >= data_module.length || userId.id_user != data_module[id_module].ID_USER)
-                        res.redirect("/prof");
+        var data_module = await pool.query('SELECT * FROM MODULE');
 
-                    var data_reponse = await pool.query('SELECT * FROM REPONSES WHERE ID_MODULES=' + id_module + ' AND ID_QUESTION=' + id_module)
-                    var data_question = await pool.query('SELECT * FROM QUESTIONS')
+        if (id_module < 0 || id_module >= data_module.length || userId.id_user != data_module[id_module].ID_USER)
+            res.redirect("/prof");
 
-                    res.render("home/prof_show_reponses", {
-                        userId: userId,
-                        data_reponse: data_reponse,
-                        data_question: data_question,
-                        id_question: id_question,
-                        id_module: id_module,
-                        type_user: userId.id_user
-                    });
-                }
+        var data_reponse = await pool.query('SELECT * FROM REPONSES WHERE ID_MODULES=' + id_module + ' AND ID_QUESTION=' + id_module)
+        var data_question = await pool.query('SELECT * FROM QUESTIONS')
 
-
+        res.render("home/prof_show_reponses", {
+            userId: userId,
+            data_reponse: data_reponse,
+            data_question: data_question,
+            id_question: id_question,
+            id_module: id_module,
+            type_user: userId.id_user
+        });
     }
 });
 
