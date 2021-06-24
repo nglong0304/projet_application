@@ -483,9 +483,6 @@ router.get("/admin/list_prof", async function(req, res) {
     } else {
         res.redirect("/")
     }
-
-
-
 });
 
 router.get("/admin/comments", async function(req, res) {
@@ -536,20 +533,28 @@ router.get("/admin/list_delegate", async function(req, res){
 router.get("/admin/delete/:id", async function(req, res){
     const { userId } = req.session;
     if (typeof(userId) == 'undefined')
-        res.redirect("../");
+        return res.redirect("../");
         
     const type_user = userId.type;
     if (type_user == 0){
         var id = req.params.id;
-        pool.query("DELETE FROM USERS WHERE ID_USER = ? ", id);
+        var data = await pool.query('SELECT TYPE FROM USERS WHERE ID_USER =?', id);
+        var type_delete = data[0].TYPE;
         
-        var new_data = await pool.query('SELECT * FROM USERS WHERE TYPE = 2');
-        
+        await pool.query("DELETE FROM USERS WHERE ID_USER = ? ", id);
+        var new_data = await pool.query('SELECT * FROM USERS WHERE TYPE = ?', type_delete);
 
-        res.render("home/list_prof", {
-            data : new_data,
-            type_user : type_user
-        })
+        if (type_delete == 2){
+            res.render("home/list_prof", {
+                data : new_data,
+                type_user : type_user
+            })
+        } else {
+            res.render("home/list_prof", {
+                data : new_data,
+                type_user : type_user
+            })
+        }      
     }
     else {
         res.render("home/login", {
