@@ -82,6 +82,7 @@ router.get("/logout", async function(req, res) {
 
 router.get("/login", function(req, res) {
     res.render("home/login", {
+        warn_login: false,
         type_user: null
     });
 });
@@ -94,6 +95,7 @@ router.post("/login", urlencodedParser, async function(req, res) {
     data.password = input_password[0].md5
 
     var flag = false
+    var warn_login = false
 
     for (var i = 0; i < data_sql.length; i++) {
         if (data.username == data_sql[i].USER_NAME && data.password == data_sql[i].USER_PASSWORD) {
@@ -144,6 +146,7 @@ router.post("/login", urlencodedParser, async function(req, res) {
     }
     if (!flag) {
         res.render("home/login", {
+            warn_login: true,
             type_user: null
         });
     }
@@ -912,6 +915,7 @@ router.post("/prof/add_module", urlencodedParser, async function(req, res) {
 
     if (!warn_module) {
         pool.query('INSERT INTO MODULE VALUE(' + (data_max_module + 1) + ',"' + parseInt(userId.id_user) + '" ,"' + data.name_module + '","' + data.description + '","' + data.type + '","' + password_md5 + '",0)');
+        return res.redirect("/");
     }
 
 
@@ -983,18 +987,19 @@ router.get("/prof/add_question/:p1", async function(req, res) {
 router.post("/prof/add_question/:p1", urlencodedParser, async function(req, res) {
     var id_module = req.params.p1
     var data_question = await pool.query('SELECT * FROM QUESTIONS')
-    const { type } = req.body
-
-    for (var i = 0; i < type.length; i++) {
-        pool.query('INSERT INTO QUESTION_MODULE VALUE(' + id_module + ' ,"' + type[i] + '")');
+    const { type} = req.body
+    var flag = 0
+    for (var i = 0; i < type.length; i++){
+        flag += 1
+        pool.query('INSERT INTO QUESTION_MODULE VALUE(' + id_module  + ' ,"' + type[i] + '")');
     }
-
-
-    res.render("home/add_question", {
-        id_module: id_module
-    })
-
-
+    
+    if(flag>0){
+        res.redirect("/prof/module/"+ id_module)
+    }else{    
+        res.render("home/add_question",{
+        id_module:id_module
+    })}
 })
 
 module.exports = router;
