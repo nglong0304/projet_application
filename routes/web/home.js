@@ -25,14 +25,26 @@ router.get("/", async function(req, res) {
 
     if (!(typeof(userId) == 'undefined')) {
         if (!(typeof(userId.type) == 'undefined'))
+        {
             var type_user = userId.type
-        else var type_user = null
-        if (!(typeof(userId.type) == 'undefined') && userId.type == 0)
-            res.redirect("/admin/comments");
-        if (!(typeof(userId.type) == 'undefined') && userId.type == 2)
-            res.redirect("/prof");
-        if (!(typeof(userId.type) == 'undefined') && userId.type == 1)
-            res.redirect("/delegue");
+            if (!(typeof(userId.type) == 'undefined') && userId.type == 0)
+                res.redirect("/admin/comments");
+            if (!(typeof(userId.type) == 'undefined') && userId.type == 2)
+                res.redirect("/prof");
+            if (!(typeof(userId.type) == 'undefined') && userId.type == 1)
+                res.redirect("/delegue");
+        }
+        else
+        {
+            req.session.destroy();
+            var type_user = null
+            var data = await pool.query('SELECT * FROM SECTION')
+
+            res.render("home/index", {
+            data: data,
+            type_user: type_user
+            });
+        }
     } else {
         var type_user = null
         var data = await pool.query('SELECT * FROM SECTION')
