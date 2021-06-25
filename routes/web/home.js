@@ -722,12 +722,14 @@ router.get("/source", function(req, res) {
 
 
 router.get("/prof/add_module", async function(req, res) {
-
     const { userId } = req.session;
-    if (typeof(userId) != 'undefined') {
-        if (typeof(userId.type) == 'undefined') {
+
+    if (typeof(userId) != 'undefined')
+    {
+        if (typeof(userId.type) == 'undefined')
+        {
             res.redirect("../");
-        } else if (userId.type != 1) {
+        } else if (userId.type != 2) {
             res.redirect("/");
         } else {
             var type_user = userId.type
