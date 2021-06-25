@@ -1,0 +1,15 @@
+p {
+    line-height: 32px;   /* within paragraph */
+    margin-bottom: 30px; /* between paragraphs */
+}
+
+body {
+    background-image: url("/images/background.jpg");
+    background-repeat: no-repeat, repeat;
+    background-color: #cccccc;
+    background-size: cover;
+}
+
+.navbar-brand {
+    color : red;
+}
