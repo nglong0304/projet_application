@@ -1,0 +1,26 @@
+<%- include('../_partial/_header'); -%>
+
+	<form class="form-signin" method="POST">
+        <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">
+            	<span class="glyphicon glyphicon-lock" aria-hidden="true">
+                </span>
+            </span>
+            <input type="password" class="form-control" placeholder="New Password" name="password" aria-describedby="basic-addon1">
+        </div>
+        <br />
+        <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">
+        		<span class="glyphicon glyphicon-lock" aria-hidden="true">
+                </span>
+            </span>
+            <input type="password" class="form-control" placeholder="Confirm Password" name="cpassword" aria-describedby="basic-addon1">
+        </div>
+        <br />
+
+        <div>
+            <input type="submit" class="btn btn-primary" value="Change password" />
+        </div>
+    </form>
+
+<%- include ('../_partial/_footer'); -%>

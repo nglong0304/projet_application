@@ -20,20 +20,17 @@
 								count++;
 							}
 						}
-						if (count > 0)
-						{
-							%>
-								note : <input type="number" name="note" min="0" max="10" /> /10 <br /><br />
-								<input type="submit" />
-							<%
-						}
-						else
+						if (count <= 0)
 						{
 							%>
 								<h4>No question in this module</h4>
 							<%
 						}
 					%>
+					note : <input type="number" name="note" min="0" max="10" /> /10 <br /><br />
+					<h4>Laisser un commentaire</h4>
+					<textarea class="form-control" name="commantaire" rows="5" style="width: 500px;" required></textarea><br />
+					<input type="submit" /> <br />
 				</form>
 			<%
 		}
