@@ -774,6 +774,7 @@ router.post("/prof/add_module", urlencodedParser, async function(req, res) {
 
     if (!warn_module) {
         pool.query('INSERT INTO MODULE VALUE(' + (data_max_module + 1) + ',"' + parseInt(userId.id_user) + '" ,"' + data.name_module + '","' + data.description + '","' + data.type + '","' + password_md5 + '",0)');
+        return res.redirect("/");
     }
 
 
@@ -846,17 +847,18 @@ router.post("/prof/add_question/:p1", urlencodedParser, async function(req, res)
     var id_module =req.params.p1
     var data_question = await pool.query('SELECT * FROM QUESTIONS')
     const { type} = req.body
- 
+    var flag = 0
     for (var i = 0; i < type.length; i++){
+        flag += 1
         pool.query('INSERT INTO QUESTION_MODULE VALUE(' + id_module  + ' ,"' + type[i] + '")');
     }
     
-
-    res.render("home/add_question",{
+    if(flag>0){
+        res.redirect("/prof/module/"+ id_module)
+    }else{    
+        res.render("home/add_question",{
         id_module:id_module
-    })
-
-
+    })}
 })
 
 module.exports = router;
