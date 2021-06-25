@@ -1,45 +1,54 @@
-<%- include('../_partial/_header_prof'); -%>
+<%- include('../_partial/_header'); -%>
 
-    <h1>Welcome to prof page <%= userId.username %></h1><br />
+    <h1>Welcome to prof page
+        <%= userId.username %>
+    </h1><br />
 
     <%
     	if (data_module.length > 0)
     	{
     		%>
-    		<div class="row">
-    		<%
+        <div class="row">
+            <%
     		for (var i=0; i < data_module.length; i++)
     		{
     			%>
-    				<div class="col-md-4 text-center">
-                        <%
+                <div class="col-md-4 text-center">
+                    <%
                             for (var y=0; y < data_section.length; y++)
                             {
                                 if (data_section[y].ID_SECTION == data_module[i].ID_SECTION)
                                 {
                                     %>
-                                        <h5><%= data_section[y].NAME_SECTION %> :</h5>
-                                    <%
+                        <h5>
+                            <%= data_section[y].NAME_SECTION %> :</h5>
+                        <%
                                     break;
                                 }
                             }
                         %>
-						<a href="/prof/module/<%= data_module[i].ID_MODULES %>"><h3><%= data_module[i].NAME_MODULE %></h3></a>
-						<h4><%= data_module[i].DESCRIPTION %></h4>
-					</div>
-    			<%
+                            <a href="/prof/module/<%= data_module[i].ID_MODULES %>">
+                                <h3>
+                                    <%= data_module[i].NAME_MODULE %>
+                                </h3>
+                            </a>
+                            <h4>
+                                <%= data_module[i].DESCRIPTION %>
+                            </h4>
+                </div>
+                <%
     		}
     		%>
-    		</div>
-    		<%
+        </div>
+        <%
     	}
     	else
     	{
     		%>
-    			<h4>you did not create a module</h4>
-    		<%
+            <h4>you did not create a module</h4>
+            <%
     	}
     	
     %>
 
-<%- include ('../_partial/_footer'); -%>
+                <%- include ('../_partial/_footer'); -%>

@@ -1,24 +1,30 @@
-<%- include('../_partial/_header_prof'); -%>
+<%- include('../_partial/_header'); -%>
 
-	<h1>Answer to module questions "<%= data_module[param].NAME_MODULE %>"</h1><br />
+    <h1>Answer to module questions "
+        <%= data_module[param].NAME_MODULE %>"</h1><br />
 
-	<%
+    <%
 		for (var i=0; i < data_quest_mod.length; i++)
 		{
 			var count = 0;
 			
 			%>
-				<h4><a href="/prof/module/<%= param %>/<%= data_quest_mod[i].ID_QUESTION %>"><%= data_question[data_quest_mod[i].ID_QUESTION].QUESTION %></a></h4>
-			<%
+        <h4>
+            <a href="/prof/module/<%= param %>/<%= data_quest_mod[i].ID_QUESTION %>">
+                <%= data_question[data_quest_mod[i].ID_QUESTION].QUESTION %>
+            </a>
+        </h4>
+        <%
 			for (var y=0; y < data_reponse.length; y++)
 			{
 				if (data_reponse[y].ID_QUESTION == data_quest_mod[i].ID_QUESTION && data_reponse[y].VALIDE==1)
 					count++;
 			}
 			%>
-				<p><%= count %> réponses</p>
-			<%
+            <p>
+                <%= count %> réponses</p>
+            <%
 		}
 	%>
 
-<%- include ('../_partial/_footer'); -%>
+                <%- include ('../_partial/_footer'); -%>

@@ -14,11 +14,12 @@ router.use(session({
     saveUnitialized: false,
     secret: 'projet_application',
     cookie: {
-        maxAge: 10 * 60 * 1000,
+        maxAge: 30 * 60 * 1000,
         sameSite: true,
     }
 }));
 
+//GET and POST for PAGE ACCUEIL
 router.get("/", async function(req, res) {
     const { userId } = req.session;
 
@@ -63,17 +64,17 @@ router.get("/about", function(req, res) {
     });
 });
 
+
+router.get("/logout", async function(req, res) {
+    req.session.destroy();
+    res.redirect("/")
+});
+
+
 router.get("/login", function(req, res) {
     res.render("home/login", {
         type_user: null
     });
-});
-
-router.get("/logout", async function(req, res) {
-    const { userId } = req.session
-
-    req.session.destroy();
-    res.redirect("../");
 });
 
 router.post("/login", urlencodedParser, async function(req, res) {
@@ -138,23 +139,9 @@ router.post("/login", urlencodedParser, async function(req, res) {
         });
     }
 
-})
-
-
-router.get("/admin", async function(req, res) {
-    const { userId } = req.session;
-    var type_user = userId.type
-    if (type_user == 0) {
-        // var data = await pool.query('SELECT * FROM SECTION')
-        // res.render("home/index", {
-        //     data: data,
-        //     type_user: type_user
-        // });
-        res.redirect("/admin/comments")
-    } else {
-        res.redirect("../");
-    }
 });
+
+//GET and POST for PROF
 
 router.get("/prof", async function(req, res) {
     const { userId } = req.session;
@@ -176,11 +163,12 @@ router.get("/prof", async function(req, res) {
         res.render("home/prof", {
             userId: userId,
             data_section: data_section,
-            data_module: data_module
+            data_module: data_module,
+            type_user: userId.type
         })
     }
 
-})
+});
 
 router.get("/prof/module/:p1", async function(req, res) {
     var param = req.params.p1
@@ -213,10 +201,12 @@ router.get("/prof/module/:p1", async function(req, res) {
             param: param,
             data_question: data_question,
             data_quest_mod: data_quest_mod,
-            data_reponse: data_reponse
+            data_reponse: data_reponse,
+            type_user: userId.type
         });
     }
 });
+
 
 router.get("/prof/module/:p1/:p2", async function(req, res) {
     var id_module = req.params.p1;
@@ -248,87 +238,37 @@ router.get("/prof/module/:p1/:p2", async function(req, res) {
             data_reponse: data_reponse,
             data_question: data_question,
             id_question: id_question,
-            id_module: id_module
+            id_module: id_module,
+            type_user: userId.id_user
         });
     }
 });
 
-router.get("/prof/profil", async function(req, res) {
-    const { userId } = req.session;
-
-    if (typeof(userId) == 'undefined')
-        res.redirect("../../");
-    else if (typeof(userId.username) == 'undefined')
-        res.redirect("../../");
-    else
-    {
-        var data_sql = await pool.query("SELECT * FROM USERS")
-        var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
-        for (var i = 0; i < data_sql.length; i++)
-            if (userId.username == data_sql[i].USER_NAME)
-                if (userId.passwd != data_sql[i].USER_PASSWORD)
-                    res.redirect("/logout");
-
-        res.render("home/prof_profile", {
-            userId: userId
-        });
-    }
-});
-
-router.post("/prof/profil", urlencodedParser, async function(req, res) {
-    var data = req.body
-    const { userId } = req.session
-
-    if (typeof(userId) == 'undefined')
-        res.redirect("../../");
-    else if (typeof(userId.username) == 'undefined')
-        res.redirect("../../");
-    else
-    {
-        var data_sql = await pool.query("SELECT * FROM USERS")
-        var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
-        for (var i = 0; i < data_sql.length; i++)
-            if (userId.username == data_sql[i].USER_NAME)
-                if (userId.passwd != data_sql[i].USER_PASSWORD)
-                    res.redirect("/logout");
-
-        if (data.password == data.cpassword)
-        {
-            var pass = await pool.query("SELECT MD5(?) as md5", data.password);
-            var sql_query_update = "UPDATE USERS SET USER_PASSWORD='"+pass[0].md5+"' WHERE ID_USER=?";
-            var ret = await pool.query(sql_query_update, userId.id_user);
-            res.redirect("../..");
-        }
-        else
-            res.redirect("");
-    }
-});
-
+//GET and POST for DELEGUE
 router.get("/delegue", async function(req, res) {
-    const { userId } = req.session;
-    if (!(typeof(userId) == 'undefined')) {
-        if (!(typeof(userId.type) == 'undefined')) {
-            var type_user = userId.type
-            if (userId.type == 1) {
-                var id = userId.id_user;
-                var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
 
-                res.render("home/delegue", {
-                    data: data,
-                    userId: userId,
-                    type_user: type_user
-                })
-            }
+    const { userId } = req.session;
+    if (typeof(userId) != 'undefined') {
+        if (typeof(userId.type) == 'undefined') {
+            res.redirect("../");
+        } else if (userId.type != 1) {
+            res.redirect("/");
         } else {
-            var type_user = null
-            res.redirect("/logout");
+            var type_user = userId.type
+            var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
+
+            res.render("home/delegue", {
+                data: data,
+                userId: userId,
+                type_user: type_user
+            })
+
         }
     } else {
-        var type_user = null
-        res.redirect("/logout");
+        res.redirect("/")
     }
 
-})
+});
 
 router.post("/delegue", urlencodedParser, async function(req, res) {
     const { userId } = req.session;
@@ -349,46 +289,56 @@ router.post("/delegue", urlencodedParser, async function(req, res) {
         userId: userId,
         type_user: type_user
     })
-})
+});
 
-
-router.get("/admin/comments", async function(req, res) {
+router.get("/prof/profil", async function(req, res) {
     const { userId } = req.session;
-    var type_user = userId.type
-    var id = req.query.id;
-    var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
 
-    res.render("home/delegue", {
-        data: data,
-        type_user: type_user
-    })
-})
+    if (typeof(userId) == 'undefined')
+        res.redirect("../../");
+    else if (typeof(userId.username) == 'undefined')
+        res.redirect("../../");
+    else {
+        var data_sql = await pool.query("SELECT * FROM USERS")
+        var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
+        for (var i = 0; i < data_sql.length; i++)
+            if (userId.username == data_sql[i].USER_NAME)
+                if (userId.passwd != data_sql[i].USER_PASSWORD)
+                    res.redirect("/logout");
 
-router.post("/admin/comments", urlencodedParser, async function(req, res) {
-    const { userId } = req.session;
-    var type_user = userId.type
-
-    var data = req.body
-    var sql_query_update = "UPDATE REPONSES SET VALIDE=1 WHERE ID_RESP=?"
-    var sql_query_del = "DELETE FROM REPONSES WHERE ID_RESP=?"
-    if (data.ret_value == "Accept") {
-        var ret = await pool.query(sql_query_update, data.id_resp)
-    } else if (data.ret_value == "Refuse") {
-        var ret = await pool.query(sql_query_del, data.id_resp)
+        res.render("home/prof_profile", {
+            userId: userId,
+            type_user: userId.type
+        });
     }
+});
 
-    var data_ret = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
+router.post("/prof/profil", urlencodedParser, async function(req, res) {
+    var data = req.body
+    const { userId } = req.session
 
-    res.render("home/delegue", {
-        data: data_ret,
-        type_user: type_user
-    })
-})
+    if (typeof(userId) == 'undefined')
+        res.redirect("../../");
+    else if (typeof(userId.username) == 'undefined')
+        res.redirect("../../");
+    else {
+        var data_sql = await pool.query("SELECT * FROM USERS")
+        var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
+        for (var i = 0; i < data_sql.length; i++)
+            if (userId.username == data_sql[i].USER_NAME)
+                if (userId.passwd != data_sql[i].USER_PASSWORD)
+                    res.redirect("/logout");
 
-router.get("/logout", async function(req, res) {
-    req.session.destroy();
-    res.redirect("/")
-})
+        if (data.password == data.cpassword) {
+            var pass = await pool.query("SELECT MD5(?) as md5", data.password);
+            var sql_query_update = "UPDATE USERS SET USER_PASSWORD='" + pass[0].md5 + "' WHERE ID_USER=?";
+            var ret = await pool.query(sql_query_update, userId.id_user);
+            res.redirect("../..");
+        } else
+            res.redirect("");
+    }
+});
+
 
 router.get("/section/:p1", async function(req, res) {
     const { userId } = req.session;
@@ -503,20 +453,168 @@ router.post("/questionnaire/:p1", urlencodedParser, async function(req, res) {
     }
 });
 
-router.get("/admin/add_user", async function(req, res) {
+// GET and POST for ADMIN
+
+router.get("/admin/list_prof", async function(req, res) {
+
     const { userId } = req.session;
-    var type_user = userId.type
-    if (typeof(type_user) == 'undefined') {
-        type_user = null
-        res.redirect("../");
+    if (typeof(userId) != 'undefined') {
+        if (typeof(userId.type) == 'undefined') {
+            res.redirect("../");
+        } else if (userId.type != 0) {
+            res.redirect("/");
+        } else {
+            var type_user = userId.type
+
+            if (type_user == 0) {
+                var data_prof = await pool.query('SELECT * FROM USERS WHERE TYPE = 2');
+
+                res.render("home/list_prof", {
+                    data: data_prof,
+                    type_user: type_user
+                })
+            } else {
+                res.render("home/login", {
+                    type_user: type_user
+                })
+            }
+
+        }
     } else {
-        res.render("home/add_user", {
-            warn_username: false,
-            warn_password: false,
-            type_user: type_user
+        res.redirect("/")
+    }
+});
+
+router.get("/admin/comments", async function(req, res) {
+    const { userId } = req.session;
+    if (typeof(userId) != 'undefined') {
+        if (typeof(userId.type) == 'undefined') {
+            res.redirect("../");
+        } else if (userId.type != 0) {
+            res.redirect("/");
+        } else {
+            var type_user = userId.type
+
+            var id = req.query.id;
+            var data = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
+
+            res.render("home/delegue", {
+                data: data,
+                type_user: type_user
+            })
+        }
+    } else {
+        res.redirect("/")
+    }
+});
+
+router.get("/admin/list_delegate", async function(req, res){
+    const { userId } = req.session;
+    if (typeof(userId) == 'undefined')
+        return res.redirect("../");
+
+    const type_user = userId.type;
+    if (type_user == 0){
+        var data_delegues = await pool.query('SELECT * FROM USERS WHERE TYPE = 1');
+
+        res.render("home/list_delegate", {
+            data : data_delegues,
+            type_user : type_user
         })
     }
-})
+    else {
+        res.render("home/login", {
+            type_user : type_user
+        })
+    }
+    
+});
+
+router.get("/admin/delete/:id", async function(req, res){
+    const { userId } = req.session;
+    if (typeof(userId) == 'undefined')
+        return res.redirect("../");
+        
+    const type_user = userId.type;
+    if (type_user == 0){
+        var id = req.params.id;
+        var data = await pool.query('SELECT TYPE FROM USERS WHERE ID_USER =?', id);
+        var type_delete = data[0].TYPE;
+        
+        await pool.query("DELETE FROM USERS WHERE ID_USER = ? ", id);
+        var new_data = await pool.query('SELECT * FROM USERS WHERE TYPE = ?', type_delete);
+
+        if (type_delete == 2){
+            res.render("home/list_prof", {
+                data : new_data,
+                type_user : type_user
+            })
+        } else {
+            res.render("home/list_prof", {
+                data : new_data,
+                type_user : type_user
+            })
+        }      
+    }
+    else {
+        res.render("home/login", {
+            type_user : type_user
+        })
+    }
+});
+
+router.post("/admin/comments", urlencodedParser, async function(req, res) {
+    const { userId } = req.session;
+    if (typeof(userId) != 'undefined') {
+        if (typeof(userId.type) == 'undefined') {
+            res.redirect("../");
+        } else if (userId.type != 0) {
+            res.redirect("/");
+        } else {
+            var type_user = userId.type
+
+            var data = req.body;
+            var sql_query_update = "UPDATE REPONSES SET VALIDE=1 WHERE ID_RESP=?"
+            var sql_query_del = "DELETE FROM REPONSES WHERE ID_RESP=?"
+            if (data.ret_value == "Accept") {
+                var ret = await pool.query(sql_query_update, data.id_resp)
+            } else if (data.ret_value == "Refuse") {
+                var ret = await pool.query(sql_query_del, data.id_resp)
+            }
+
+            var data_ret = await pool.query("SELECT ID_RESP,REPONSE,NAME_MODULE,QUESTION,TYPE FROM REPONSES JOIN MODULE USING(ID_MODULES) LEFT JOIN QUESTIONS USING(ID_QUESTION) WHERE VALIDE=0")
+
+            res.render("home/delegue", {
+                data: data_ret,
+                type_user: type_user
+            })
+        }
+    } else {
+        res.redirect("/")
+    }
+
+});
+
+router.get("/admin/add_user", async function(req, res) {
+    const { userId } = req.session;
+    if (typeof(userId) != 'undefined') {
+        if (typeof(userId.type) == 'undefined') {
+            res.redirect("../");
+        } else if (userId.type != 0) {
+            res.redirect("/");
+        } else {
+            var type_user = userId.type
+
+            res.render("home/add_user", {
+                warn_username: false,
+                warn_password: false,
+                type_user: type_user
+            })
+        }
+    } else {
+        res.redirect("/")
+    }
+});
 
 router.post("/admin/add_user", urlencodedParser, async function(req, res) {
     const { userId } = req.session;
@@ -550,7 +648,7 @@ router.post("/admin/add_user", urlencodedParser, async function(req, res) {
     })
 
 
-})
+});
 
 router.get("/module/:p1", async function(req, res) {
     const { userId } = req.session;
@@ -594,5 +692,112 @@ router.post("/module/:p1", urlencodedParser, async function(req, res) {
 router.get("/source", function(req, res) {
     res.render("home/source");
 });
+
+
+router.get("/prof/add_module", async function(req, res) {
+
+    const { userId } = req.session;
+    if (typeof(userId) != 'undefined') {
+        if (typeof(userId.type) == 'undefined') {
+            res.redirect("../");
+        } else if (userId.type != 1) {
+            res.redirect("/");
+        } else {
+            var type_user = userId.type
+
+            res.render("home/add_module", {
+                warn_module: false,
+                type_user: type_user
+            })
+
+        }
+    } else {
+        res.redirect("/")
+    }
+
+})
+
+router.post("/prof/add_module", urlencodedParser, async function(req, res) {
+    const { userId } = req.session;
+    var data = req.body
+    var data_modules = await pool.query('SELECT * FROM MODULE')
+    var data_max_module = await pool.query('SELECT MAX(ID_MODULES) AS max FROM MODULE')
+    data_max_module = data_max_module[0].max
+    var warn_module = false
+
+
+    var password_md5 = await pool.query("SELECT MD5(?) as md5", data.password)
+    password_md5 = password_md5[0].md5
+
+
+    for (var i = 0; i < data_modules.length; i++)
+        if (data.username == data_modules[i].NAME_MODULE)
+            warn_module = true
+
+
+    if (!warn_module) {
+        pool.query('INSERT INTO MODULE VALUE(' + (data_max_module + 1) + ',"' + parseInt(userId.id_user) + '" ,"' + data.username + '","' + data.description + '","' + data.type + '","' + password_md5 + '",0)');
+    }
+
+
+    res.render("home/add_module", {
+        warn_module: warn_module
+    })
+
+
+})
+
+router.get("/change_password", async function(req, res) {
+    const { userId } = req.session;
+    if (typeof(userId) != 'undefined') {
+        if (typeof(userId.type) == 'undefined') {
+            res.redirect("../");
+        } else {
+            var type_user = userId.type
+
+            res.render("home/change_password", {
+                warn_old_password: false,
+                warn_confirm_password: false,
+                type_user: type_user
+            })
+
+        }
+    } else {
+        res.redirect("/")
+    }
+})
+
+router.post("/change_password", urlencodedParser, async function(req, res) {
+    const { userId } = req.session;
+    var data = req.body
+    var warn_old_password = false
+    var warn_confirm_password = false
+    console.log(data.old_password)
+    var old_password_md5 = await pool.query("select MD5(?) AS md5", data.old_password)
+    old_password_md5 = old_password_md5[0].md5
+
+    console.log(userId.id_user)
+    var database_old_pass = await pool.query("SELECT USER_PASSWORD FROM USERS WHERE ID_USER=" + parseInt(userId.id_user))
+    database_old_pass = database_old_pass[0].USER_PASSWORD
+    if (old_password_md5 != database_old_pass)
+        warn_old_password = true
+
+    if (data.new_password != data.confirm_password)
+        warn_confirm_password = true
+
+    if (!warn_old_password && !warn_confirm_password) {
+        var password_md5 = await pool.query("select MD5(?) AS md5", data.new_password)
+        password_md5 = password_md5[0].md5
+        await pool.query("UPDATE USERS SET USER_PASSWORD=? WHERE ID_USER=?", [password_md5, userId.id_user])
+        res.redirect("/")
+    } else {
+        res.render("home/change_password", {
+            warn_old_password: warn_old_password,
+            warn_confirm_password: warn_confirm_password,
+            type_user: userId.type
+        })
+
+    }
+})
 
 module.exports = router;
