@@ -111,7 +111,7 @@ router.post("/login", urlencodedParser, async function(req, res) {
                 var type = 0;
                 var user = { username, passwd, id_user, type };
                 req.session.userId = user;
-                res.redirect("/admin/comments/?user=" + username + "&id=" + id)
+                res.redirect("/admin/comments")
                 flag = true
                 break
             }
@@ -124,7 +124,7 @@ router.post("/login", urlencodedParser, async function(req, res) {
                 var type = 1;
                 var user = { username, passwd, id_user, type };
                 req.session.userId = user;
-                res.redirect("/delegue/?user=" + username + "&id=" + id)
+                res.redirect("/delegue/?user=" + username)
                 flag = true
 
                 break
@@ -577,7 +577,7 @@ router.get("/admin/delete/:id", async function(req, res){
                 type_user : type_user
             })
         } else {
-            res.render("home/list_prof", {
+            res.render("home/list_delegate", {
                 data : new_data,
                 type_user : type_user
             })
