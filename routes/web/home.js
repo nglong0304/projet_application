@@ -242,17 +242,28 @@ router.get("/prof/module/:p1/:p2", async function(req, res) {
         if (id_module < 0 || id_module >= data_module.length || userId.id_user != data_module[id_module].ID_USER)
             res.redirect("/prof");
 
-        var data_reponse = await pool.query('SELECT * FROM REPONSES WHERE ID_MODULES=' + id_module + ' AND ID_QUESTION=' + id_module)
         var data_question = await pool.query('SELECT * FROM QUESTIONS')
 
-        res.render("home/prof_show_reponses", {
-            userId: userId,
-            data_reponse: data_reponse,
-            data_question: data_question,
-            id_question: id_question,
-            id_module: id_module,
-            type_user: userId.id_user
-        });
+        if (id_question == "commentaire")
+        {
+            var data_reponse = await pool.query('SELECT * FROM REPONSES WHERE ID_MODULES=' + id_module + ' AND TYPE=0')
+            res.render("home/prof_show_comment", {
+                userId: userId,
+                data_reponse: data_reponse
+            });
+        }
+        else
+        {
+            var data_reponse = await pool.query('SELECT * FROM REPONSES WHERE ID_MODULES=' + id_module + ' AND ID_QUESTION=' + id_module)
+            res.render("home/prof_show_reponses", {
+                userId: userId,
+                data_reponse: data_reponse,
+                data_question: data_question,
+                id_question: id_question,
+                id_module: id_module,
+                type_user: userId.id_user
+            });
+        }
     }
 });
 
@@ -448,6 +459,11 @@ router.post("/questionnaire/:p1", urlencodedParser, async function(req, res) {
                     pool.query('INSERT INTO REPONSES VALUE(' + (data_max_reponse[0].max + count) + ',' + data_quest_mod[i].ID_QUESTION + ',"' + reponses[input_name] + '",' + data_quest_mod[i].ID_MODULES + ', 1, 0)');
                     count++;
                 }
+            }
+            if (reponses.commantaire != "")
+            {
+                pool.query('INSERT INTO REPONSES VALUE(' + (data_max_reponse[0].max + count) + ', NULL,"' + reponses.commantaire + '",' + param + ', 0, 0)');
+                count++;
             }
             if (reponses.note >= 0 && reponses.note <= 10)
             {
