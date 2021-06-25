@@ -437,6 +437,21 @@ router.post("/questionnaire/:p1", urlencodedParser, async function(req, res) {
                     count++;
                 }
             }
+            if (reponses.note >= 0 && reponses.note <= 10)
+            {
+                pool.query('INSERT INTO REPONSES VALUE(' + (data_max_reponse[0].max + count) + ', NULL,"' + reponses.note + '",' + param + ', 2, 1)');
+                var data_moyen = await pool.query('SELECT * FROM REPONSES WHERE ID_MODULES='+param+' AND TYPE=2');
+                var moyenne=0;
+                count=0;
+                for (var i=0; i < data_moyen.length; i++)
+                {
+                    moyenne = moyenne + parseFloat(data_moyen[i].REPONSE);
+                    count++;
+                }
+                if (count > 0)
+                    moyenne = moyenne / count;
+                await pool.query("UPDATE MODULE SET MOYEN_NOTE=? WHERE ID_MODULES=?", [moyenne, param]);
+            }
             req.session.destroy();
             res.render("home/valid_reponse", {
                 data_section: data_section,
