@@ -241,16 +241,13 @@ router.get("/prof/module/:p1/:p2", async function(req, res) {
 
         var data_question = await pool.query('SELECT * FROM QUESTIONS')
 
-        if (id_question == "commentaire")
-        {
+        if (id_question == "commentaire") {
             var data_reponse = await pool.query('SELECT * FROM REPONSES WHERE ID_MODULES=' + id_module + ' AND TYPE=0')
             res.render("home/prof_show_comment", {
                 userId: userId,
                 data_reponse: data_reponse
             });
-        }
-        else
-        {
+        } else {
             var data_reponse = await pool.query('SELECT * FROM REPONSES WHERE ID_MODULES=' + id_module + ' AND ID_QUESTION=' + id_module)
             res.render("home/prof_show_reponses", {
                 userId: userId,
@@ -457,13 +454,11 @@ router.post("/questionnaire/:p1", urlencodedParser, async function(req, res) {
                     count++;
                 }
             }
-            if (reponses.commantaire != "")
-            {
+            if (reponses.commantaire != "") {
                 pool.query('INSERT INTO REPONSES VALUE(' + (data_max_reponse[0].max + count) + ', NULL,"' + reponses.commantaire + '",' + param + ', 0, 0)');
                 count++;
             }
-            if (reponses.note >= 0 && reponses.note <= 10)
-            {
+            if (reponses.note >= 0 && reponses.note <= 10) {
                 pool.query('INSERT INTO REPONSES VALUE(' + (data_max_reponse[0].max + count) + ', NULL,"' + reponses.note + '",' + param + ', 2, 1)');
                 var data_moyen = await pool.query('SELECT * FROM REPONSES WHERE ID_MODULES=' + param + ' AND TYPE=2');
                 var moyenne = 0;
@@ -533,8 +528,7 @@ router.get("/admin/edit/:p1", async function(req, res) {
         } else {
             var type_user = userId.type
 
-            if (type_user == 0) 
-            {
+            if (type_user == 0) {
                 res.render("home/admin_edit_passwd", {
                     type_user: type_user
                 });
@@ -562,10 +556,8 @@ router.post("/admin/edit/:p1", urlencodedParser, async function(req, res) {
         } else {
             var type_user = userId.type
 
-            if (type_user == 0) 
-            {
-                if (data.password == data.cpassword)
-                {
+            if (type_user == 0) {
+                if (data.password == data.cpassword) {
                     var pass = await pool.query("SELECT MD5(?) as md5", data.password);
                     var sql_query_update = "UPDATE USERS SET USER_PASSWORD=? WHERE ID_USER=?";
                     var ret = await pool.query(sql_query_update, [pass[0].md5, param]);
@@ -647,8 +639,8 @@ router.get("/admin/delete/:id", async function(req, res) {
             })
         } else {
             res.render("home/list_delegate", {
-                data : new_data,
-                type_user : type_user
+                data: new_data,
+                type_user: type_user
             })
         }
     } else {
@@ -959,17 +951,17 @@ router.get("/prof/add_question/:p1", async function(req, res) {
 })
 
 router.post("/prof/add_question/:p1", urlencodedParser, async function(req, res) {
-    var id_module =req.params.p1
+    var id_module = req.params.p1
     var data_question = await pool.query('SELECT * FROM QUESTIONS')
-    const { type} = req.body
- 
-    for (var i = 0; i < type.length; i++){
-        pool.query('INSERT INTO QUESTION_MODULE VALUE(' + id_module  + ' ,"' + type[i] + '")');
-    }
-    
+    const { type } = req.body
 
-    res.render("home/add_question",{
-        id_module:id_module
+    for (var i = 0; i < type.length; i++) {
+        pool.query('INSERT INTO QUESTION_MODULE VALUE(' + id_module + ' ,"' + type[i] + '")');
+    }
+
+
+    res.render("home/add_question", {
+        id_module: id_module
     })
 
 
