@@ -25,6 +25,19 @@
 				<p><%= count %> réponses</p>
 			<%
 		}
+		%>
+			<a href="/prof/module/<%= param %>/commentaire">Commentaire</a>
+		<%
+			var count = 0;
+			for (var y=0; y < data_reponse.length; y++)
+			{
+				if (data_reponse[y].TYPE == 0 && data_reponse[y].VALIDE==1)
+					count++;
+			}
+			%>
+            <p>
+                <%= count %> commentaires</p>
+            <%
 	%>
 	</div>
 <%- include ('../_partial/_footer'); -%>
