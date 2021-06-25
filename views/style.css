@@ -9,7 +9,6 @@ body {
     background-color: #cccccc;
     background-size: cover;
 }
-
-.navbar-brand {
-    color : red;
+#admin-menu :hover{
+    background-color : orange
 }
