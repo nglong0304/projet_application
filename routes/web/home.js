@@ -7,6 +7,7 @@ var router = express.Router();
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 const pool = require('../database/database.js');
+const { route } = require("./index.js");
 
 router.use(session({
     name: 'sid',
@@ -230,37 +231,37 @@ router.get("/prof/module/:p1", async function(req, res) {
     var param = req.params.p1
     const { userId } = req.session;
 
-        if (typeof(userId) == 'undefined')
-            res.redirect("../");
-        else if (typeof(userId.username) == 'undefined')
-            res.redirect("../");
-        else {
-            var data_sql = await pool.query("SELECT * FROM USERS")
-            var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
-            for (var i = 0; i < data_sql.length; i++)
-                if (userId.username == data_sql[i].USER_NAME)
-                    if (userId.passwd != data_sql[i].USER_PASSWORD)
-                        res.redirect("/logout");
+    if (typeof(userId) == 'undefined')
+        res.redirect("../");
+    else if (typeof(userId.username) == 'undefined')
+        res.redirect("../");
+    else {
+        var data_sql = await pool.query("SELECT * FROM USERS")
+        var input_password = await pool.query("SELECT MD5(?) as md5", userId.passwd)
+        for (var i = 0; i < data_sql.length; i++)
+            if (userId.username == data_sql[i].USER_NAME)
+                if (userId.passwd != data_sql[i].USER_PASSWORD)
+                    res.redirect("/logout");
 
-            var data_module = await pool.query('SELECT * FROM MODULE');
+        var data_module = await pool.query('SELECT * FROM MODULE');
 
-            if (param < 0 || param >= data_module.length || userId.id_user != data_module[param].ID_USER)
-                res.redirect("/prof");
+        if (param < 0 || param >= data_module.length || userId.id_user != data_module[param].ID_USER)
+            res.redirect("/prof");
 
-            var data_question = await pool.query('SELECT * FROM QUESTIONS')
-            var data_quest_mod = await pool.query('SELECT * FROM QUESTION_MODULE WHERE ID_MODULES=' + param)
-            var data_reponse = await pool.query('SELECT * FROM REPONSES WHERE ID_MODULES=' + param)
+        var data_question = await pool.query('SELECT * FROM QUESTIONS')
+        var data_quest_mod = await pool.query('SELECT * FROM QUESTION_MODULE WHERE ID_MODULES=' + param)
+        var data_reponse = await pool.query('SELECT * FROM REPONSES WHERE ID_MODULES=' + param)
 
-            res.render("home/prof_show_module", {
-                userId: userId,
-                data_module: data_module,
-                param: param,
-                data_question: data_question,
-                data_quest_mod: data_quest_mod,
-                data_reponse: data_reponse,
-                type_user: userId.type
-            });
-        }
+        res.render("home/prof_show_module", {
+            userId: userId,
+            data_module: data_module,
+            param: param,
+            data_question: data_question,
+            data_quest_mod: data_quest_mod,
+            data_reponse: data_reponse,
+            type_user: userId.type
+        });
+    }
 });
 
 //GET and POST for DELEGUE
@@ -531,10 +532,9 @@ router.get("/admin/modules/:p1", async function(req, res) {
         } else {
             var type_user = userId.type
 
-            if (type_user == 0) 
-            {
-                var data_module = await pool.query('SELECT * FROM MODULE WHERE ID_USER='+param);
-                var teacher_name= await pool.query('SELECT * FROM USERS WHERE ID_USER='+param);
+            if (type_user == 0) {
+                var data_module = await pool.query('SELECT * FROM MODULE WHERE ID_USER=' + param);
+                var teacher_name = await pool.query('SELECT * FROM USERS WHERE ID_USER=' + param);
                 res.render("home/admin_show_module", {
                     type_user: type_user,
                     data_module: data_module,
@@ -803,30 +803,57 @@ router.post("/admin/add_module", urlencodedParser, async function(req, res) {
     data_max_module = data_max_module[0].max
     var warn_module = false
 
-
     var password_md5 = await pool.query("SELECT MD5(?) as md5", data.password)
     password_md5 = password_md5[0].md5
-
 
     for (var i = 0; i < data_modules.length; i++)
         if (data.module == data_modules[i].NAME_MODULE)
             warn_module = true
-
 
     if (!warn_module) {
         pool.query('INSERT INTO MODULE VALUE(' + (data_max_module + 1) + ',"' + parseInt(data.prof_id) + '" ,"' + data.module + '","' + data.description + '","' + data.type + '","' + password_md5 + '",0)');
         return res.redirect("/")
     }
 
-
     res.render("home/admin_add_module", {
         warn_module: warn_module,
         data_user: data_user,
         type_user: userId.type
     })
+})
 
+router.get("/admin/add_question", async function(req, res) {
+    const { userId } = req.session;
+
+    if (typeof(userId) != 'undefined') {
+        if (typeof(userId.type) == 'undefined') {
+            return res.redirect("/");
+        } else if (userId.type != 0) {
+            return res.redirect("/");
+        } else {
+            var type_user = userId.type
+
+            var data_user = await pool.query("SELECT * FROM USERS")
+            res.render("home/admin_add_question", {
+                type_user: type_user
+            })
+
+        }
+    } else {
+        return res.redirect("/")
+    }
+})
+
+router.post("/admin/add_question", urlencodedParser, async function(req, res) {
+    const { userId } = req.session;
+    var data = req.body
+    var max_id_question = await pool.query('SELECT MAX(ID_QUESTION) AS max FROM QUESTIONS')
+    max_id_question = max_id_question[0].max
+    pool.query("INSERT INTO QUESTIONS VALUE(?,?,0)", [parseInt(max_id_question + 1), data.new_question])
+    res.redirect("/")
 
 })
+
 
 router.get("/module/:p1", async function(req, res) {
     const { userId } = req.session;
@@ -882,7 +909,6 @@ router.get("/prof/add_module", async function(req, res) {
             res.redirect("/");
         } else {
             var type_user = userId.type
-
             res.render("home/add_module", {
                 warn_module: false,
                 type_user: type_user
@@ -980,26 +1006,48 @@ router.post("/change_password", urlencodedParser, async function(req, res) {
 })
 
 router.get("/prof/add_question/:p1", async function(req, res) {
+    const { userId } = req.session;
 
-    res.render("home/add_question")
+    if (typeof(userId) != 'undefined') {
+        if (typeof(userId.type) == 'undefined') {
+            return res.redirect("/");
+        } else if (userId.type != 2) {
+            return res.redirect("/");
+        } else {
+            var type_user = userId.type
+
+            var data_question = await pool.query("select * from QUESTIONS")
+            res.render("home/add_question", {
+                data_question: data_question,
+                type_user: type_user
+            })
+        }
+    } else {
+        return res.redirect("/")
+    }
+
 })
 
 router.post("/prof/add_question/:p1", urlencodedParser, async function(req, res) {
     var id_module = req.params.p1
     var data_question = await pool.query('SELECT * FROM QUESTIONS')
-    const { type} = req.body
+    const { userId } = req.session;
+
+    const { type } = req.body
     var flag = 0
-    for (var i = 0; i < type.length; i++){
+    for (var i = 0; i < type.length; i++) {
         flag += 1
-        pool.query('INSERT INTO QUESTION_MODULE VALUE(' + id_module  + ' ,"' + type[i] + '")');
+        pool.query('INSERT INTO QUESTION_MODULE VALUE(' + id_module + ' ,"' + type[i] + '")');
     }
-    
-    if(flag>0){
-        res.redirect("/prof/module/"+ id_module)
-    }else{    
-        res.render("home/add_question",{
-        id_module:id_module
-    })}
+
+    if (flag > 0) {
+        res.redirect("/prof/module/" + id_module)
+    } else {
+        res.render("home/add_question", {
+            data_question: data_question,
+            type_user: userId.type
+        })
+    }
 })
 
 module.exports = router;
