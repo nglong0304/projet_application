@@ -831,13 +831,14 @@ router.post("/prof/add_module", urlencodedParser, async function(req, res) {
 
 
     if (!warn_module) {
-        pool.query('INSERT INTO MODULE VALUE(' + (data_max_module + 1) + ',"' + parseInt(userId.id_user) + '" ,"' + data.username + '","' + data.description + '","' + data.type + '","' + password_md5 + '",0)');
+        pool.query('INSERT INTO MODULE VALUE(' + (data_max_module + 1) + ',"' + parseInt(userId.id_user) + '" ,"' + data.name_module + '","' + data.description + '","' + data.type + '","' + password_md5 + '",0)');
     }
 
 
     res.render("home/add_module", {
         warn_module: warn_module
     })
+
 
 
 })
@@ -892,6 +893,28 @@ router.post("/change_password", urlencodedParser, async function(req, res) {
         })
 
     }
+})
+
+router.get("/prof/add_question/:p1", async function(req, res) {
+
+    res.render("home/add_question")
+})
+
+router.post("/prof/add_question/:p1", urlencodedParser, async function(req, res) {
+    var id_module =req.params.p1
+    var data_question = await pool.query('SELECT * FROM QUESTIONS')
+    const { type} = req.body
+ 
+    for (var i = 0; i < type.length; i++){
+        pool.query('INSERT INTO QUESTION_MODULE VALUE(' + id_module  + ' ,"' + type[i] + '")');
+    }
+    
+
+    res.render("home/add_question",{
+        id_module:id_module
+    })
+
+
 })
 
 module.exports = router;
