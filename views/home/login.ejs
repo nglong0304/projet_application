@@ -19,12 +19,14 @@
                             aria-hidden="true"></span></span>
                         <input type="password" class="form-control" placeholder="Password" name="password" aria-describedby="basic-addon1">
                     </div>
+                    <% if (warn_login){ %>
+                        <div class="alert alert-danger" role="alert"> Wrong username or password. Try again</div>
+                        <% } %>
+                            <div>
+                                <input type="submit" class="btn btn-primary" value="Sign In" />
 
-                    <div>
-                        <input type="submit" class="btn btn-primary" value="Sign In" />
-                        
-                    </div>
-                    <input type="checkbox" checked="checked"> Remember me
+                            </div>
+                            <input type="checkbox" checked="checked"> Remember me
 
                 </form>
             </div>

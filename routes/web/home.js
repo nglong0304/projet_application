@@ -82,6 +82,7 @@ router.get("/logout", async function(req, res) {
 
 router.get("/login", function(req, res) {
     res.render("home/login", {
+        warn_login: false,
         type_user: null
     });
 });
@@ -94,6 +95,7 @@ router.post("/login", urlencodedParser, async function(req, res) {
     data.password = input_password[0].md5
 
     var flag = false
+    var warn_login = false
 
     for (var i = 0; i < data_sql.length; i++) {
         if (data.username == data_sql[i].USER_NAME && data.password == data_sql[i].USER_PASSWORD) {
@@ -144,6 +146,7 @@ router.post("/login", urlencodedParser, async function(req, res) {
     }
     if (!flag) {
         res.render("home/login", {
+            warn_login: true,
             type_user: null
         });
     }
