@@ -517,7 +517,65 @@ router.get("/admin/list_prof", async function(req, res) {
                     type_user: type_user
                 })
             }
+        }
+    } else {
+        res.redirect("/")
+    }
+});
 
+router.get("/admin/edit/:p1", async function(req, res) {
+    const { userId } = req.session;
+    if (typeof(userId) != 'undefined') {
+        if (typeof(userId.type) == 'undefined') {
+            res.redirect("../");
+        } else if (userId.type != 0) {
+            res.redirect("/");
+        } else {
+            var type_user = userId.type
+
+            if (type_user == 0) 
+            {
+                res.render("home/admin_edit_passwd", {
+                    type_user: type_user
+                });
+            } else {
+                res.render("home/login", {
+                    type_user: type_user
+                })
+            }
+        }
+    } else {
+        res.redirect("/")
+    }
+});
+
+router.post("/admin/edit/:p1", urlencodedParser, async function(req, res) {
+    const { userId } = req.session;
+    data = req.body;
+    param = req.params.p1;
+
+    if (typeof(userId) != 'undefined') {
+        if (typeof(userId.type) == 'undefined') {
+            res.redirect("../");
+        } else if (userId.type != 0) {
+            res.redirect("/");
+        } else {
+            var type_user = userId.type
+
+            if (type_user == 0) 
+            {
+                if (data.password == data.cpassword)
+                {
+                    var pass = await pool.query("SELECT MD5(?) as md5", data.password);
+                    var sql_query_update = "UPDATE USERS SET USER_PASSWORD=? WHERE ID_USER=?";
+                    var ret = await pool.query(sql_query_update, [pass[0].md5, param]);
+                    res.redirect("../..");
+                }
+            } else {
+                res.render("home/login", {
+                    type_user: type_user
+                })
+            }
         }
     } else {
         res.redirect("/")
