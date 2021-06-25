@@ -1,30 +1,43 @@
-<%- include('../_partial/_header'); -%>
+<%- include('../_partial/_header_prof'); -%>
+	<div class="container mt-5">
+	<h1>Answer to module questions "<%= data_module[param].NAME_MODULE %>"</h1>
 
-    <h1>Answer to module questions "
-        <%= data_module[param].NAME_MODULE %>"</h1><br />
+		<a href="/prof" class="btn btn-primary mb-5">Go Back</a>
+		<a href="/prof/add_question/<%= param %>" class="btn btn-primary mb-5">Cliquez ici pour ajouter des questions <%= data_module[param].ID_MODULE %></a>
 
-    <%
+	</div><br />
+
+	<div class="container mt-5">
+	<%
 		for (var i=0; i < data_quest_mod.length; i++)
 		{
 			var count = 0;
 			
 			%>
-        <h4>
-            <a href="/prof/module/<%= param %>/<%= data_quest_mod[i].ID_QUESTION %>">
-                <%= data_question[data_quest_mod[i].ID_QUESTION].QUESTION %>
-            </a>
-        </h4>
-        <%
+				<h4><a href="/prof/module/<%= param %>/<%= data_quest_mod[i].ID_QUESTION %>"><%= data_question[data_quest_mod[i].ID_QUESTION].QUESTION %></a></h4>
+			<%
 			for (var y=0; y < data_reponse.length; y++)
 			{
 				if (data_reponse[y].ID_QUESTION == data_quest_mod[i].ID_QUESTION && data_reponse[y].VALIDE==1)
 					count++;
 			}
 			%>
-            <p>
-                <%= count %> réponses</p>
-            <%
+				<p><%= count %> réponses</p>
+			<%
 		}
+		%>
+			<a href="/prof/module/<%= param %>/commentaire">Commentaire</a>
+		<%
+			var count = 0;
+			for (var y=0; y < data_reponse.length; y++)
+			{
+				if (data_reponse[y].TYPE == 0 && data_reponse[y].VALIDE==1)
+					count++;
+			}
+			%>
+            <p>
+                <%= count %> commentaires</p>
+            <%
 	%>
-
-                <%- include ('../_partial/_footer'); -%>
+	</div>
+<%- include ('../_partial/_footer'); -%>
