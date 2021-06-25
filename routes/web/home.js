@@ -670,6 +670,64 @@ router.post("/admin/add_user", urlencodedParser, async function(req, res) {
 
 });
 
+router.get("/admin/add_module", async function(req, res) {
+    const { userId } = req.session;
+
+    if (typeof(userId) != 'undefined') {
+        if (typeof(userId.type) == 'undefined') {
+            return res.redirect("/");
+        } else if (userId.type != 0) {
+            return res.redirect("/");
+        } else {
+            var type_user = userId.type
+
+            var data_user = await pool.query("SELECT * FROM USERS")
+            res.render("home/admin_add_module", {
+                warn_module: false,
+                data_user: data_user,
+                type_user: type_user
+            })
+
+        }
+    } else {
+        return res.redirect("/")
+    }
+})
+
+router.post("/admin/add_module", urlencodedParser, async function(req, res) {
+    const { userId } = req.session;
+    var data = req.body
+    var data_user = await pool.query("SELECT * FROM USERS")
+    var data_modules = await pool.query('SELECT * FROM MODULE')
+    var data_max_module = await pool.query('SELECT MAX(ID_MODULES) AS max FROM MODULE')
+    data_max_module = data_max_module[0].max
+    var warn_module = false
+
+
+    var password_md5 = await pool.query("SELECT MD5(?) as md5", data.password)
+    password_md5 = password_md5[0].md5
+
+
+    for (var i = 0; i < data_modules.length; i++)
+        if (data.module == data_modules[i].NAME_MODULE)
+            warn_module = true
+
+
+    if (!warn_module) {
+        pool.query('INSERT INTO MODULE VALUE(' + (data_max_module + 1) + ',"' + parseInt(data.prof_id) + '" ,"' + data.module + '","' + data.description + '","' + data.type + '","' + password_md5 + '",0)');
+        return res.redirect("/")
+    }
+
+
+    res.render("home/admin_add_module", {
+        warn_module: warn_module,
+        data_user: data_user,
+        type_user: userId.type
+    })
+
+
+})
+
 router.get("/module/:p1", async function(req, res) {
     const { userId } = req.session;
 
