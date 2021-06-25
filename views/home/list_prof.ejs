@@ -21,7 +21,7 @@
                 <tr>
                     <th scope="row"> <%= data[i].ID_USER %> </th> 
                     <td> <%= data[i].USER_NAME %> </td>
-                    <td><a href="#" style = "color:blue"> Modules </a></td>
+                    <td><a href="/admin/modules/<%= data[i].ID_USER %>" style = "color:blue"> Modules </a></td>
                     <td><a href="/admin/edit/<%= data[i].ID_USER %>">Edit password</a></td>
                     <td><a href="/admin/delete/<%= data[i].ID_USER%>" style = "color: red"> Delete </a> </td>
                 </tr>

@@ -4,7 +4,7 @@ const pool = mariadb.createPool({
     host: 'localhost',
     user: 'chungsql',
     password: 'chung',
-    database: 'database_application',
+    database: 'database_applicatio',
     connectionLimit: 5
 });
 
