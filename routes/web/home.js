@@ -521,6 +521,37 @@ router.get("/admin/list_prof", async function(req, res) {
     }
 });
 
+router.get("/admin/modules/:p1", async function(req, res) {
+    var param = req.params.p1;
+    const { userId } = req.session;
+    if (typeof(userId) != 'undefined') {
+        if (typeof(userId.type) == 'undefined') {
+            res.redirect("../");
+        } else if (userId.type != 0) {
+            res.redirect("/");
+        } else {
+            var type_user = userId.type
+
+            if (type_user == 0) 
+            {
+                var data_module = await pool.query('SELECT * FROM MODULE WHERE ID_USER='+param);
+                var teacher_name= await pool.query('SELECT * FROM USERS WHERE ID_USER='+param);
+                res.render("home/admin_show_module", {
+                    type_user: type_user,
+                    data_module: data_module,
+                    teacher_name: teacher_name
+                });
+            } else {
+                res.render("home/login", {
+                    type_user: type_user
+                })
+            }
+        }
+    } else {
+        res.redirect("/")
+    }
+});
+
 router.get("/admin/edit/:p1", async function(req, res) {
     const { userId } = req.session;
     if (typeof(userId) != 'undefined') {
