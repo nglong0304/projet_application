@@ -10,5 +10,28 @@ body {
     background-size: cover;
 }
 #admin-menu :hover{
-    background-color : orange
+    background-color : orange;
 }
+
+#form_login{
+    position: absolute
+}
+
+#center_text{
+    text-align: center;
+}
+
+#header{
+    background-color:#b3ffff;
+    color: black;
+}
+
+#message_login{
+    color:red;
+    margin-top: 15px;
+}
+
+.dropdown{
+    margin-top: 9px;
+}
+
