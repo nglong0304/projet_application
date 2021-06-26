@@ -4,7 +4,7 @@
 		if (param >= 0 && param < data_module.length)
 		{
 			%>
-				<h1>Welcome to "<%= data_module[param].NAME_MODULE %>"  module question page</h1><br /><br />
+				<h1 id="center_text">Comments for module "<%= data_module[param].NAME_MODULE %>"</h1><br /><br />
 
 				<form method="post">
 					<%
@@ -30,7 +30,7 @@
 					note : <input type="number" name="note" min="0" max="10" /> /10 <br /><br />
 					<h4>Laisser un commentaire</h4>
 					<textarea class="form-control" name="commantaire" rows="5" style="width: 500px;" required></textarea><br />
-					<input type="submit" /> <br />
+					<input type="submit" class="btn btn-primary" value="Submit" /> <br />
 				</form>
 			<%
 		}

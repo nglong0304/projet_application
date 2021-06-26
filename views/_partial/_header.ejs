@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <div class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="navbar navbar-default navbar-static-top" role="navigation" id="header">
         <div class="container">
             <div class="navbar-header">
                 <a style="color:red;" class="navbar-brand" href="/">Evaluation Enseignements</a>
@@ -21,7 +21,7 @@
             <nav>
                 <ul class="nav navbar-nav navbar-left">
                     <!-- <li><a href="/home">Home</a></li> -->
-                    <li><a href="/about">About</a></li>
+                    <li><a style="color: red;" href="/about">About</a></li>
                 </ul>
             </nav>
 
@@ -33,7 +33,7 @@
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Welcome admin !
                                     <span class="caret"></span></button>
-                                <ul class="dropdown-menu">
+                                <ul id = "admin-menu" class="dropdown-menu">
                                     <li><a href="/change_password">Change password</a></li>
                                     <li><a href="/admin/add_user">Add new User</a></li>
                                     <li><a href="/admin/add_module">Add new module</a></li>
@@ -76,8 +76,8 @@
 
 
                                             <% if(type_user == null) { %>
-                                                <li>
-                                                    <div class="usermenu"><span class="login">You are currently using guest access (<a href="/login">Log in</a>)</span></div>
+                                                <li id="message_login">
+                                                    <div class="usermenu"><span class="login">You are currently using guest access (<a style = "color:#0000ff" href="/login">Log in</a>)</span></div>
                                                 </li>
                                                 <% } %>
                 </ul>
