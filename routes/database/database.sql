@@ -81,7 +81,7 @@ INSERT INTO MODULE VALUE(5, 4, 'Web', 'Les bases des langage du web', 0,'5d2aee9
 INSERT INTO QUESTIONS VALUE(0, 'Comment avez-vous trouver le cours ?', 0);
 INSERT INTO QUESTIONS VALUE(1, 'Comment avez-vous trouver le TD ?', 0);
 INSERT INTO QUESTIONS VALUE(2, 'Comment avez-vous trouver le partiel ?', 0);
-INSERT INTO QUESTIONS VALUE(3, 'Avez-vous bien comprit le cour ?', 0);
+INSERT INTO QUESTIONS VALUE(3, 'Avez-vous bien compris le cour ?', 0);
 
 INSERT INTO QUESTION_MODULE VALUE(0, 0);
 INSERT INTO QUESTION_MODULE VALUE(0, 1);
@@ -91,8 +91,8 @@ INSERT INTO QUESTION_MODULE VALUE(1, 1);
 INSERT INTO QUESTION_MODULE VALUE(3, 3);
 
 INSERT INTO REPONSES VALUE(0, 0, "J'ai trouvé le cour très interésant.", 0, 1, 0);
-INSERT INTO REPONSES VALUE(4, 0, "J'ai trouvé le cour très très interésant.", 0, 1, 0);
-INSERT INTO REPONSES VALUE(5, 0, "J'ai trouvé le cour très très très interésant.", 0, 1, 0);
+INSERT INTO REPONSES VALUE(4, 0, "J'ai trouvé que le cour est utile .", 0, 1, 0);
+INSERT INTO REPONSES VALUE(5, 0, "J'ai trouvé que le cours est pas bien, pas clair.", 0, 1, 0);
 INSERT INTO REPONSES VALUE(1, 0, "J'ai trouvé le cour très cool.", 0, 1, 1);
 INSERT INTO REPONSES VALUE(2, 3, "J'ai trouvé le cour très cool.", 3, 1, 1);
 INSERT INTO REPONSES VALUE(3, NULL, "Le cour ne dois pas changer et resté comme ça !", 3, 0, 1);
